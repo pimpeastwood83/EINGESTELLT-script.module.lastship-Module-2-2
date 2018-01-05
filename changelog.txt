@@ -4,4 +4,4 @@
   plugin.video.lasthip
 - settings Anpassung an die neue Aufteilung
 - serienstream.to entfernt (Loginproblem konnte bisher nicht gelöst werden)
-- Fix hdstreams (nur Filme möglich)
+
