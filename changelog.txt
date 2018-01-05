@@ -1,7 +1,0 @@
-[B]1.0.0[/B]
-- Aufteilung von plugin.video.lastship in 2 Module:
-  script.module.lastship
-  plugin.video.lasthip
-- settings Anpassung an die neue Aufteilung
-- serienstream.to entfernt (Loginproblem konnte bisher nicht gelöst werden)
-
