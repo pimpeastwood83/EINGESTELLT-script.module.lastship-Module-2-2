@@ -8,5 +8,13 @@
 		<platform>all</platform>
 		<summary lang="en">lastship</summary>
 		<description>Viel Spaß mit LastShip</description>
+		<news lang="de">
+		- Aufteilung von plugin.video.lastship in 2 Module:
+  			script.module.lastship
+	  		plugin.video.lasthip
+		- settings Anpassung an die neue Aufteilung
+		- serienstream.to entfernt (Loginprobleme)
+		- Fix hdstreams (nur Filme möglich)
+		- cfscraper Update</news>
 	</extension>
 </addon>
