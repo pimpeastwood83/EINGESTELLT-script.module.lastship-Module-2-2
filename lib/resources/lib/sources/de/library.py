@@ -1,7 +1,4 @@
-
-
 # -*- coding: utf-8 -*-
-
 """
     Lastship Add-on (C) 2017
     Credits to Exodus and Covenant; our thanks go to their creators
@@ -20,8 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-
-import urllib,urlparse,json
+import urllib, urlparse, json
 
 from resources.lib.modules import control
 from resources.lib.modules import cleantitle
@@ -35,13 +31,15 @@ class source:
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            return urllib.urlencode({'imdb': imdb, 'title': title, 'localtitle': localtitle,'year': year})
+            return urllib.urlencode({'imdb': imdb, 'title': title, 'localtitle': localtitle, 'year': year})
         except:
             return
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
         try:
-            return urllib.urlencode({'imdb': imdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'localtvshowtitle': localtvshowtitle, 'year': year})
+            return urllib.urlencode(
+                {'imdb': imdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'localtvshowtitle': localtvshowtitle,
+                 'year': year})
         except:
             return
 
@@ -69,21 +67,26 @@ class source:
 
             content_type = 'episode' if 'tvshowtitle' in data else 'movie'
 
-            years = (data['year'], str(int(data['year'])+1), str(int(data['year'])-1))
+            years = (data['year'], str(int(data['year']) + 1), str(int(data['year']) - 1))
 
             if content_type == 'movie':
                 title = cleantitle.get(data['title'])
                 localtitle = cleantitle.get(data['localtitle'])
                 ids = [data['imdb']]
 
-                r = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties": ["imdbnumber", "title", "originaltitle", "file"]}, "id": 1}' % years)
+                r = control.jsonrpc(
+                    '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties": ["imdbnumber", "title", "originaltitle", "file"]}, "id": 1}' % years)
                 r = unicode(r, 'utf-8', errors='ignore')
                 r = json.loads(r)['result']['movies']
 
-                r = [i for i in r if str(i['imdbnumber']) in ids or title in [cleantitle.get(i['title'].encode('utf-8')), cleantitle.get(i['originaltitle'].encode('utf-8'))]]
+                r = [i for i in r if
+                     str(i['imdbnumber']) in ids or title in [cleantitle.get(i['title'].encode('utf-8')),
+                                                              cleantitle.get(i['originaltitle'].encode('utf-8'))]]
                 r = [i for i in r if not i['file'].encode('utf-8').endswith('.strm')][0]
 
-                r = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovieDetails", "params": {"properties": ["streamdetails", "file"], "movieid": %s }, "id": 1}' % str(r['movieid']))
+                r = control.jsonrpc(
+                    '{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovieDetails", "params": {"properties": ["streamdetails", "file"], "movieid": %s }, "id": 1}' % str(
+                        r['movieid']))
                 r = unicode(r, 'utf-8', errors='ignore')
                 r = json.loads(r)['result']['moviedetails']
             elif content_type == 'episode':
@@ -92,26 +95,35 @@ class source:
                 season, episode = data['season'], data['episode']
                 ids = [data['imdb'], data['tvdb']]
 
-                r = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties": ["imdbnumber", "title"]}, "id": 1}' % years)
+                r = control.jsonrpc(
+                    '{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties": ["imdbnumber", "title"]}, "id": 1}' % years)
                 r = unicode(r, 'utf-8', errors='ignore')
                 r = json.loads(r)['result']['tvshows']
 
-                r = [i for i in r if str(i['imdbnumber']) in ids or title in [cleantitle.get(i['title'].encode('utf-8')), cleantitle.get(i['originaltitle'].encode('utf-8'))]][0]
+                r = [i for i in r if
+                     str(i['imdbnumber']) in ids or title in [cleantitle.get(i['title'].encode('utf-8')),
+                                                              cleantitle.get(i['originaltitle'].encode('utf-8'))]][0]
 
-                r = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": {"filter":{"and": [{"field": "season", "operator": "is", "value": "%s"}, {"field": "episode", "operator": "is", "value": "%s"}]}, "properties": ["file"], "tvshowid": %s }, "id": 1}' % (str(season), str(episode), str(r['tvshowid'])))
+                r = control.jsonrpc(
+                    '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": {"filter":{"and": [{"field": "season", "operator": "is", "value": "%s"}, {"field": "episode", "operator": "is", "value": "%s"}]}, "properties": ["file"], "tvshowid": %s }, "id": 1}' % (
+                    str(season), str(episode), str(r['tvshowid'])))
                 r = unicode(r, 'utf-8', errors='ignore')
                 r = json.loads(r)['result']['episodes']
 
                 r = [i for i in r if not i['file'].encode('utf-8').endswith('.strm')][0]
 
-                r = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodeDetails", "params": {"properties": ["streamdetails", "file"], "episodeid": %s }, "id": 1}' % str(r['episodeid']))
+                r = control.jsonrpc(
+                    '{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodeDetails", "params": {"properties": ["streamdetails", "file"], "episodeid": %s }, "id": 1}' % str(
+                        r['episodeid']))
                 r = unicode(r, 'utf-8', errors='ignore')
                 r = json.loads(r)['result']['episodedetails']
 
             url = r['file'].encode('utf-8')
 
-            try: quality = int(r['streamdetails']['video'][0]['width'])
-            except: quality = -1
+            try:
+                quality = int(r['streamdetails']['video'][0]['width'])
+            except:
+                quality = -1
 
             if quality >= 2160: quality = '4K'
             if quality >= 1440: quality = '1440p'
@@ -121,8 +133,10 @@ class source:
 
             info = []
             try:
-                f = control.openFile(url) ; s = f.size() ; f.close()
-                s = '%.2f GB' % (float(s)/1024/1024/1024)
+                f = control.openFile(url);
+                s = f.size();
+                f.close()
+                s = '%.2f GB' % (float(s) / 1024 / 1024 / 1024)
                 info.append(s)
             except:
                 pass
@@ -134,7 +148,9 @@ class source:
             info = ' | '.join(info)
             info = info.encode('utf-8')
 
-            sources.append({'source': '0', 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'local': True, 'direct': True, 'debridonly': False})
+            sources.append(
+                {'source': '0', 'quality': quality, 'language': 'en', 'url': url, 'info': info, 'local': True,
+                 'direct': True, 'debridonly': False})
 
             return sources
         except:
@@ -142,7 +158,3 @@ class source:
 
     def resolve(self, url):
         return url
-
-
-library.py
-"library.py" wird angezeigt.
