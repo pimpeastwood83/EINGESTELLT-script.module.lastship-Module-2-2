@@ -1,4 +1,4 @@
-Nightly
+[B]1.0.2[/B]
 - Fix login Problem Serienstream
 - client.py optimiert
 
