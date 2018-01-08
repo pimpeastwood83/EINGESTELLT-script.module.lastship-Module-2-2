@@ -1,8 +1,8 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 """
     Lastship Add-on (C) 2017
-    Credits to Placenta and Covenant; our thanks go to their creators
+    Credits to Exodus and Covenant; our thanks go to their creators
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,12 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-# Addon Name: lastship
-# Addon id: plugin.video.lastship
-# Addon Provider: LastShip
 
-
-import re,sys,cookielib,urllib,urllib2,urlparse,gzip,StringIO,HTMLParser,time,random,base64,xbmc
+import re,sys,cookielib,urllib,urllib2,urlparse,gzip,StringIO,HTMLParser,time,random,base64
 
 from resources.lib.modules import cache
 from resources.lib.modules import workers
@@ -96,26 +92,11 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 
         if redirect == False:
 
-            #old implementation
-            #class NoRedirection(urllib2.HTTPErrorProcessor):
-            #    def http_response(self, request, response): return response
+            class NoRedirection(urllib2.HTTPErrorProcessor):
+                def http_response(self, request, response): return response
 
-            #opener = urllib2.build_opener(NoRedirection)
-            #opener = urllib2.install_opener(opener)
-
-            class NoRedirectHandler(urllib2.HTTPRedirectHandler):
-                def http_error_302(self, req, fp, code, msg, headers):
-                    infourl = urllib.addinfourl(fp, headers, req.get_full_url())
-                    infourl.status = code
-                    infourl.code = code
-                    return infourl
-                http_error_300 = http_error_302
-                http_error_301 = http_error_302
-                http_error_303 = http_error_302
-                http_error_307 = http_error_302
-
-            opener = urllib2.build_opener(NoRedirectHandler())
-            urllib2.install_opener(opener)
+            opener = urllib2.build_opener(NoRedirection)
+            opener = urllib2.install_opener(opener)
 
             try: del _headers['Referer']
             except: pass
@@ -144,9 +125,8 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
                 if 'cf-browser-verification' in cf_result:
 
                     netloc = '%s://%s' % (urlparse.urlparse(url).scheme, urlparse.urlparse(url).netloc)
-                    
-                    if not netloc.endswith('/'): netloc += '/'
 
+                    if not netloc.endswith('/'): netloc += '/'
                     ua = _headers['User-Agent']
 
                     cf = cache.get(cfcookie().get, 168, netloc, ua, timeout)
@@ -191,12 +171,7 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
             if close == True: response.close()
             return result
 
-        elif output == 'file_size':
-            try: content = int(response.headers['Content-Length'])
-            except: content = '0'
-            response.close()
-            return content
-        
+
         if limit == '0':
             result = response.read(224 * 1024)
         elif not limit == None:
@@ -520,3 +495,4 @@ def _get_keyboard( default="", heading="", hidden=False ):
 
 def removeNonAscii(s): 
     return "".join(i for i in s if ord(i)<128)
+
