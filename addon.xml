@@ -9,6 +9,7 @@
 		<summary lang="en">lastship</summary>
 		<description>Viel Spaß mit LastShip</description>
 		<news lang="de">- Fix login Problem Serienstream
-                 - client.py optimiert</news>
+                 - client.py optimiert
+		- Update library.py</news>
 	</extension>
 </addon>
