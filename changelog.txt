@@ -1,3 +1,7 @@
+Nightly
+- Fix login Problem Serienstream
+- client.py optimiert
+
 [B]1.0.1[/B]
 - cfscraper Update
 - hdstreams update
