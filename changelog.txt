@@ -1,3 +1,6 @@
+[B]1.0.3~nightly1[/B]
+- Add Option Flashx Captcha Pairing Abfrage zu deaktivieren
+
 [B]1.0.2[/B]
 - Fix login Problem Serienstream
 - client.py optimiert
