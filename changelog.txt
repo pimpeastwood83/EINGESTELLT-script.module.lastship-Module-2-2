@@ -1,5 +1,6 @@
-[B]1.0.3~nightly1[/B]
+[B]1.0.3~nightly2[/B]
 - Add Option Flashx Captcha Pairing Abfrage zu deaktivieren
+- Update navigator.py (News und Updates aktiviert und base64 link eingefügt)
 
 [B]1.0.2[/B]
 - Fix login Problem Serienstream
