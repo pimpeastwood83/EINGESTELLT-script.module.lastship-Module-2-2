@@ -1,3 +1,6 @@
+[B]1.0.3.1[/B]
+- Bugfix whatsnew
+
 [B]1.0.3[/B]
 - Add Option Flashx Captcha Pairing Abfrage zu deaktivieren
 - Update navigator.py (News und Updates aktiviert und base64 link eingefügt)
