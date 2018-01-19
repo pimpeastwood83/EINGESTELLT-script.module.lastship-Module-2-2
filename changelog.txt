@@ -1,3 +1,6 @@
+nightly
+jsunpack.py
+
 [B]1.0.3.1[/B]
 - Bugfix whatsnew
 
