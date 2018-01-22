@@ -114,8 +114,8 @@ class movies:
         self.traktfeatured_link = 'http://api.trakt.tv/recommendations/movies?limit=40'
         self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=40&page=1'
         self.imdblists_link = 'http://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
-        self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=movie,tvMovie&start=1'
-        self.imdblist2_link = 'http://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=movie,tvMovie&start=1'
+        self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
+        self.imdblist2_link = 'http://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
         self.imdbwatchlist_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=alpha,asc' % self.imdb_user
         self.imdbwatchlist2_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
 
@@ -543,10 +543,12 @@ class movies:
             return
 
         try:
-            next = client.parseDOM(result, 'a', ret='href', attrs = {'class': 'lister-page-next next-page'})
+            next = client.parseDOM(result, 'a', ret='href', attrs = {'class': 'lister-page-next .+?'})
+            if len(next) == 0:
+                next = client.parseDOM(result, 'a', ret='href', attrs = {'class': '.+?lister-page-next .+?'})
 
             if len(next) == 0:
-                next = client.parseDOM(result, 'div', attrs = {'class': 'pagination'})[0]
+                next = client.parseDOM(result, 'div', attrs = {'class': 'list-pagination'})[0]
                 next = zip(client.parseDOM(next, 'a', ret='href'), client.parseDOM(next, 'a'))
                 next = [i[0] for i in next if 'Next' in i[1]]
 

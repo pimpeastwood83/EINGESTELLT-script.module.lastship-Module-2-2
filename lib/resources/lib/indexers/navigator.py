@@ -46,11 +46,11 @@ class navigator:
     HOMEPATH      = xbmc.translatePath('special://home/')
     ADDONSPATH    = os.path.join(HOMEPATH, 'addons')
     THISADDONPATH = os.path.join(ADDONSPATH, ADDON_ID)
-    NEWSFILE      = base64.b64decode('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2xhc3RzaGlwL3BsdWdpbi52aWRlby5sYXN0c2hpcC9uaWdodGx5L3doYXRzbmV3LnR4dA==')
+    NEWSFILE      = base64.b64decode('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2xhc3RzaGlwL3BsdWdpbi52aWRlby5sYXN0c2hpcC9uaWdodGx5L3doYXRzbmV3')
     LOCALNEWS     = os.path.join(THISADDONPATH, 'whatsnew.txt')
     
     def root(self):
-        self.addDirectoryItem('[COLOR=lime]News und Updates[/COLOR]', 'newsNavigator', 'icon.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem('[COLOR=orange]News and Updates[/COLOR]', 'newsNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32001, 'movieNavigator', 'movies.png', 'DefaultMovies.png')
         self.addDirectoryItem(32002, 'tvNavigator', 'tvshows.png', 'DefaultTVShows.png')
 

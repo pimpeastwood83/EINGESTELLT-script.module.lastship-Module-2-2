@@ -137,6 +137,10 @@ key = "RgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6"
 
 iv = "p2s5v8y/B?E(H+Mb"
 
+def autoTraktSubscription(tvshowtitle, year, imdb, tvdb):
+     from . import libtools
+     libtools.libtvshows().add(tvshowtitle, year, imdb, tvdb)
+
 def addonIcon():
     theme = appearance() ; art = artPath()
     if not (art == None and theme in ['-', '']): return os.path.join(art, 'icon.png')

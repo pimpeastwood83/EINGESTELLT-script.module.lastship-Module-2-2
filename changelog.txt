@@ -1,5 +1,16 @@
-nightly
-jsunpack.py
+[B]1.0.4~nightly5[/B]
+- libtools optimiert (Fehler Behebung)
+
+[B]1.0.4~nightly4[/B]
+- movies.py (Zeile 117 und 118, imdblist_link)
+
+[B]1.0.4~nightly3[/B]
+- Add Trakt Collections AutoSync
+	- control.py
+	- libtools.py
+- Update jsunpack.py
+- movies.py
+- tvshows.py
 
 [B]1.0.3.1[/B]
 - Bugfix whatsnew
