@@ -35,6 +35,7 @@ from resources.lib.modules import workers
 from resources.lib.modules import views
 from resources.lib.modules import utils
 from resources.lib.indexers import navigator
+from resources.lib.modules import log_utils
 
 import os,sys,re,json,urllib,urlparse,datetime
 
@@ -441,6 +442,7 @@ class movies:
                 if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
                 imdb = item['ids']['imdb']
+		log_utils.log('MovieShit - trakt_list - imdb: ' + str(imdb))
                 if imdb == None or imdb == '': raise Exception()
                 imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
 
