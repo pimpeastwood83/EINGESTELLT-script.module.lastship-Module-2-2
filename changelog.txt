@@ -1,5 +1,7 @@
 [B]1.0.4~nightly6[/B]
-- movies.py
+- Gesamten Speicher löschen und Metaspeicher löschen hinzugefügt
+	- movies.py
+	- navigator.py
 
 [B]1.0.4~nightly5[/B]
 - libtools optimiert (Fehler Behebung)
