@@ -253,6 +253,8 @@ class navigator:
         self.addDirectoryItem(32050, 'clearSources', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32604, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32052, 'clearCache', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32707, 'clearMetaCache', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32706, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32073, 'authTrakt', 'trakt.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32609, 'urlResolver', 'urlresolver.png', 'DefaultAddonProgram.png')
 
