@@ -1,3 +1,6 @@
+[B]1.0.4~nightly7[/B]
+- Update jsunpack
+
 [B]1.0.4~nightly6[/B]
 - Gesamten Speicher löschen und Metaspeicher löschen hinzugefügt
 	- movies.py
