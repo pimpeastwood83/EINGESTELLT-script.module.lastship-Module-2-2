@@ -50,7 +50,7 @@ class navigator:
     LOCALNEWS     = os.path.join(THISADDONPATH, 'whatsnew.txt')
     
     def root(self):
-        self.addDirectoryItem('[COLOR=orange]News and Updates[/COLOR]', 'newsNavigator', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem('[COLOR=orange]News und Updates[/COLOR]', 'newsNavigator', 'icon.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32001, 'movieNavigator', 'movies.png', 'DefaultMovies.png')
         self.addDirectoryItem(32002, 'tvNavigator', 'tvshows.png', 'DefaultTVShows.png')
 
@@ -253,8 +253,8 @@ class navigator:
         self.addDirectoryItem(32050, 'clearSources', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32604, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32052, 'clearCache', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32707, 'clearMetaCache', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32706, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32707, 'clearCacheMeta', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32706, 'clearCacheAll', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32073, 'authTrakt', 'trakt.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32609, 'urlResolver', 'urlresolver.png', 'DefaultAddonProgram.png')
 
@@ -345,7 +345,6 @@ class navigator:
         control.idle()
         yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
         if not yes: return
-        from resources.lib.modules import cache
         cache.cache_clear()
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
@@ -353,7 +352,6 @@ class navigator:
         control.idle()
         yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
         if not yes: return
-        from resources.lib.modules import cache
         cache.cache_clear_meta()
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
@@ -361,7 +359,6 @@ class navigator:
         control.idle()
         yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
         if not yes: return
-        from resources.lib.modules import cache
         cache.cache_clear_providers()
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
@@ -369,7 +366,6 @@ class navigator:
         control.idle()
         yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
         if not yes: return
-        from resources.lib.modules import cache
         cache.cache_clear_search()
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
@@ -377,7 +373,6 @@ class navigator:
         control.idle()
         yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
         if not yes: return
-        from resources.lib.modules import cache
         cache.cache_clear_all()
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
