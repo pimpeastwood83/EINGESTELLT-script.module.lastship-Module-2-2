@@ -1,3 +1,8 @@
+[B]1.0.4~nightly8[/B]
+ - cache.py  (Zeile 169 cache clear search) + Zeile 240 cache_clear_search()
+- Navigator.py Zeile 256 & 257 Umbenennung von clearemetacache auf clearcachemeta und clearcacheall
+- Navigator.py: in allen def clear cache Funktionen den Eintrag  from resources.lib.modules import cache entfernt da schon in Zeile 29 importiert wird
+
 [B]1.0.4~nightly7[/B]
 - Update jsunpack
 
