@@ -33,7 +33,7 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['de']
-        self.domains = ['movie4k.to', 'movie4k.tv', 'movie.to', 'movie4k.me', 'movie4k.org', 'movie4k.pe', 'movie4k.am']
+        self.domains = ['movie4k.tv', 'movie4k.to', 'movie.to', 'movie4k.me', 'movie4k.org', 'movie4k.pe', 'movie4k.am']
         self._base_link = None
         self.search_link = '/movies.php?list=search&search=%s'
 
