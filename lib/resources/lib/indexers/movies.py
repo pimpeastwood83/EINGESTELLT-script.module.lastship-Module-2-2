@@ -226,7 +226,7 @@ class movies:
             
             dbcon = database.connect(control.searchFile)
             dbcur = dbcon.cursor()
-            dbcur.execute("INSERT INTO movies VALUES (?,?)", (None,q))
+            dbcur.execute("INSERT INTO movies VALUES (?,?)", (None,q.decode('utf-8')))
             dbcon.commit()
             dbcur.close()
             url = self.search_link + urllib.quote_plus(q)
