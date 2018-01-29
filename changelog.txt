@@ -1,5 +1,7 @@
-[B]1.0.4~nightly9[/B]
+[B]1.0.4~nightly10[/B]
+- tata wieder hinzugefügt (nur Filme)
 
+[B]1.0.4~nightly9[/B]
 - Fix Umlaute Suche (movies.py und tvshows.py)
 
 [B]1.0.4~nightly8[/B]
