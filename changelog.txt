@@ -1,3 +1,7 @@
+[B]1.0.4~nightly11[/B]
+- Update hdfilme
+- Update hdstreams
+
 [B]1.0.4~nightly10[/B]
 - tata wieder hinzugefügt (nur Filme)
 
