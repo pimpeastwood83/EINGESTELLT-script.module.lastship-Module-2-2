@@ -27,6 +27,11 @@ import hashlib
 
 
 from resources.lib.modules import pyaes
+#from resources.lib.modules import cache
+#from resources.lib.modules import cleantitle
+#from resources.lib.modules import client
+#from resources.lib.modules import source_utils
+#from resources.lib.modules import dom_parser
 from resources.lib.modules import cfscrape
 
 
@@ -140,7 +145,42 @@ class source:
             fUrl=sUrl2.replace('\/', '/').replace('"', '')       
                 
             return fUrl
+                   
+    def __evp_decode(self,cipher_text, passphrase, salt=None):
+        cipher_text = base64.b64decode(cipher_text)
+        if not salt:
+            salt = cipher_text[8:16]
+            cipher_text = cipher_text[16:]
+        data = self.__evpKDF(passphrase, salt)
+        decrypter = pyaes.Decrypter(pyaes.AESModeOfOperationCBC(data['key'], data['iv']))
+        plain_text = decrypter.feed(cipher_text)
+        plain_text += decrypter.feed()
+        return plain_text
 
+    
+    def __evpKDF(self,passwd, salt, key_size=8, iv_size=4, iterations=1, hash_algorithm="md5"):
+        target_key_size = key_size + iv_size
+        derived_bytes = ""
+        number_of_derived_words = 0
+        block = None
+        hasher = hashlib.new(hash_algorithm)
+        while number_of_derived_words < target_key_size:
+            if block is not None:
+                hasher.update(block)
+            hasher.update(passwd)
+            hasher.update(salt)
+            block = hasher.digest()
+            hasher = hashlib.new(hash_algorithm)
+            for _i in range(1, iterations):
+                hasher.update(block)
+                block = hasher.digest()
+                hasher = hashlib.new(hash_algorithm)
+            derived_bytes += block[0: min(len(block), (target_key_size - number_of_derived_words) * 4)]
+            number_of_derived_words += len(block) / 4
+        return {
+            "key": derived_bytes[0: key_size * 4],
+            "iv": derived_bytes[key_size * 4:]
+        }
 
 
     def resolve(self, url):
@@ -149,17 +189,17 @@ class source:
     def __search(self, imdb):
         try:
             sHtmlContent=self.scraper.get(self.base_link).content
-            #print "print hdstreams.org shtml entry", sHtmlContent
+            print "print hdstreams.org shtml entry", sHtmlContent
             pattern = '<meta name="csrf-token" content="([^"]+)">'
             string = str(sHtmlContent)
             token = re.compile(pattern, flags=re.I | re.M).findall(string)
-            #print "print hdstreams.org shtml entry token", token[0]
+            print "print hdstreams.org shtml entry token", token[0]
             # first iteration of session object to be parsed for search
             #sHtmlContent=self.scraper.get(self.search % imdb).content
             #sHtmlContent=self.scraper.get(self.search % imdb).content
             sHtmlContent=self.scraper.get(self.search % imdb,headers={'X-CSRF-TOKEN':token[0],'X-Requested-With':'XMLHttpRequest'}).text
                
-            #print "print hdstreams.org shtml", sHtmlContent
+            print "print hdstreams.org shtml", sHtmlContent
             pattern = '"title":"([^"]+).*?"url":"([^"]+).*?src":"([^"]+)'
             aResult = re.compile(pattern, re.DOTALL).findall(sHtmlContent)
             
