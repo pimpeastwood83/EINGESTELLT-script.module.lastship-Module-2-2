@@ -1,21 +1,21 @@
 # -*- coding: UTF-8 -*-
 
 """
-    Lastship Add-on (C) 2017
-    Credits to Placenta and Covenant; our thanks go to their creators
+	Lastship Add-on (C) 2017
+	Credits to Placenta and Covenant; our thanks go to their creators
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # Addon Name: lastship
@@ -28,9 +28,12 @@ from resources.lib.modules import control
 from resources.lib.modules import trakt
 from resources.lib.modules import cache
 
-sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1]) ; control.moderator()
+sysaddon = sys.argv[0];
+syshandle = int(sys.argv[1]);
+control.moderator()
 
-artPath = control.artPath() ; addonFanart = control.addonFanart()
+artPath = control.artPath();
+addonFanart = control.addonFanart()
 
 imdbCredentials = False if control.setting('imdb.user') == '' else True
 
@@ -42,15 +45,18 @@ queueMenu = control.lang(32065).encode('utf-8')
 
 
 class navigator:
-    ADDON_ID      = xbmcaddon.Addon().getAddonInfo('id')
-    HOMEPATH      = xbmc.translatePath('special://home/')
-    ADDONSPATH    = os.path.join(HOMEPATH, 'addons')
+    ADDON_ID = xbmcaddon.Addon().getAddonInfo('id')
+    HOMEPATH = xbmc.translatePath('special://home/')
+    ADDONSPATH = os.path.join(HOMEPATH, 'addons')
     THISADDONPATH = os.path.join(ADDONSPATH, ADDON_ID)
-    NEWSFILE      = base64.b64decode('aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2xhc3RzaGlwL3BsdWdpbi52aWRlby5sYXN0c2hpcC9uaWdodGx5L3doYXRzbmV3LnR4dA==')
-    LOCALNEWS     = os.path.join(THISADDONPATH, 'whatsnew.txt')
-    
+    NEWSFILE = base64.b64decode(
+        'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2xhc3RzaGlwL3BsdWdpbi52aWRlby5sYXN0c2hpcC9uaWdodGx5L3doYXRzbmV3LnR4dA==')
+    LOCALNEWS = os.path.join(THISADDONPATH, 'whatsnew.txt')
+
     def root(self):
-        self.addDirectoryItem('[COLOR=orange]News und Updates[/COLOR]', 'newsNavigator', 'icon.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem('[COLOR=lime]News und Updates[/COLOR]', 'newsNavigator', 'icon.png',
+                              'DefaultAddonProgram.png')
+        self.addDirectoryItem(32010, 'searchNavigator', 'search.png', 'DefaultFolder.png')
         self.addDirectoryItem(32001, 'movieNavigator', 'movies.png', 'DefaultMovies.png')
         self.addDirectoryItem(32002, 'tvNavigator', 'tvshows.png', 'DefaultTVShows.png')
 
@@ -61,44 +67,46 @@ class navigator:
         if not control.setting('movie.widget') == '0':
             self.addDirectoryItem(32005, 'movieWidget', 'latest-movies.png', 'DefaultRecentlyAddedMovies.png')
 
-        if (traktIndicators == True and not control.setting('tv.widget.alt') == '0') or (traktIndicators == False and not control.setting('tv.widget') == '0'):
+        if (traktIndicators == True and not control.setting('tv.widget.alt') == '0') or (
+                traktIndicators == False and not control.setting('tv.widget') == '0'):
             self.addDirectoryItem(32006, 'tvWidget', 'latest-episodes.png', 'DefaultRecentlyAddedEpisodes.png')
 
         self.addDirectoryItem(32007, 'channels', 'channels.png', 'DefaultMovies.png')
 
         self.addDirectoryItem(32008, 'toolNavigator', 'tools.png', 'DefaultAddonProgram.png')
 
-        downloads = True if control.setting('downloads') == 'true' and (len(control.listDir(control.setting('movie.download.path'))[0]) > 0 or len(control.listDir(control.setting('tv.download.path'))[0]) > 0) else False
+        downloads = True if control.setting('downloads') == 'true' and (
+                len(control.listDir(control.setting('movie.download.path'))[0]) > 0 or len(
+            control.listDir(control.setting('tv.download.path'))[0]) > 0) else False
         if downloads == True:
             self.addDirectoryItem(32009, 'downloadNavigator', 'downloads.png', 'DefaultFolder.png')
 
-        self.addDirectoryItem(32010, 'searchNavigator', 'search.png', 'DefaultFolder.png')
-
         self.endDirectory()
 
-#######################################################################
-# News and Update Code
+    #######################################################################
+    # News and Update Code
     def news(self):
-            message=self.open_news_url(self.NEWSFILE)
-            r = open(self.LOCALNEWS)
-            compfile = r.read()       
-            if len(message)>1:
-                    if compfile == message:pass
-                    else:
-                            text_file = open(self.LOCALNEWS, "w")
-                            text_file.write(message)
-                            text_file.close()
-                            compfile = message
-            self.showText('[B][COLOR springgreen]Latest Updates and Information[/COLOR][/B]', compfile)
-        
+        message = self.open_news_url(self.NEWSFILE)
+        r = open(self.LOCALNEWS)
+        compfile = r.read()
+        if len(message) > 1:
+            if compfile == message:
+                pass
+            else:
+                text_file = open(self.LOCALNEWS, "w")
+                text_file.write(message)
+                text_file.close()
+                compfile = message
+        self.showText('[B][COLOR springgreen]Latest Updates and Information[/COLOR][/B]', compfile)
+
     def open_news_url(self, url):
-            req = urllib2.Request(url)
-            req.add_header('User-Agent', 'klopp')
-            response = urllib2.urlopen(req)
-            link=response.read()
-            response.close()
-            print link
-            return link
+        req = urllib2.Request(url)
+        req.add_header('User-Agent', 'klopp')
+        response = urllib2.urlopen(req)
+        link = response.read()
+        response.close()
+        print link
+        return link
 
     def showText(self, heading, text):
         id = 10147
@@ -114,8 +122,10 @@ class navigator:
                 win.getControl(5).setText(text)
                 quit()
                 return
-            except: pass
-#######################################################################
+            except:
+                pass
+
+    #######################################################################
 
     def movies(self, lite=False):
         self.addDirectoryItem(32011, 'movieGenres', 'genres.png', 'DefaultMovies.png')
@@ -140,18 +150,21 @@ class navigator:
 
         self.endDirectory()
 
-
     def mymovies(self, lite=False):
         self.accountCheck()
 
         if traktCredentials == True and imdbCredentials == True:
-            self.addDirectoryItem(32032, 'movies&url=traktcollection', 'trakt.png', 'DefaultMovies.png', queue=True, context=(32551, 'moviesToLibrary&url=traktcollection'))
-            self.addDirectoryItem(32033, 'movies&url=traktwatchlist', 'trakt.png', 'DefaultMovies.png', queue=True, context=(32551, 'moviesToLibrary&url=traktwatchlist'))
+            self.addDirectoryItem(32032, 'movies&url=traktcollection', 'trakt.png', 'DefaultMovies.png', queue=True,
+                                  context=(32551, 'moviesToLibrary&url=traktcollection'))
+            self.addDirectoryItem(32033, 'movies&url=traktwatchlist', 'trakt.png', 'DefaultMovies.png', queue=True,
+                                  context=(32551, 'moviesToLibrary&url=traktwatchlist'))
             self.addDirectoryItem(32034, 'movies&url=imdbwatchlist', 'imdb.png', 'DefaultMovies.png', queue=True)
 
         elif traktCredentials == True:
-            self.addDirectoryItem(32032, 'movies&url=traktcollection', 'trakt.png', 'DefaultMovies.png', queue=True, context=(32551, 'moviesToLibrary&url=traktcollection'))
-            self.addDirectoryItem(32033, 'movies&url=traktwatchlist', 'trakt.png', 'DefaultMovies.png', queue=True, context=(32551, 'moviesToLibrary&url=traktwatchlist'))
+            self.addDirectoryItem(32032, 'movies&url=traktcollection', 'trakt.png', 'DefaultMovies.png', queue=True,
+                                  context=(32551, 'moviesToLibrary&url=traktcollection'))
+            self.addDirectoryItem(32033, 'movies&url=traktwatchlist', 'trakt.png', 'DefaultMovies.png', queue=True,
+                                  context=(32551, 'moviesToLibrary&url=traktwatchlist'))
 
         elif imdbCredentials == True:
             self.addDirectoryItem(32032, 'movies&url=imdbwatchlist', 'imdb.png', 'DefaultMovies.png', queue=True)
@@ -175,7 +188,6 @@ class navigator:
 
         self.endDirectory()
 
-
     def tvshows(self, lite=False):
         self.addDirectoryItem(32011, 'tvGenres', 'genres.png', 'DefaultTVShows.png')
         self.addDirectoryItem(32016, 'tvNetworks', 'networks.png', 'DefaultTVShows.png')
@@ -186,9 +198,10 @@ class navigator:
         self.addDirectoryItem(32023, 'tvshows&url=rating', 'highly-rated.png', 'DefaultTVShows.png')
         self.addDirectoryItem(32019, 'tvshows&url=views', 'most-voted.png', 'DefaultTVShows.png')
         self.addDirectoryItem(32024, 'tvshows&url=airing', 'airing-today.png', 'DefaultTVShows.png')
-        #self.addDirectoryItem(32025, 'tvshows&url=active', 'returning-tvshows.png', 'DefaultTVShows.png')
+        # self.addDirectoryItem(32025, 'tvshows&url=active', 'returning-tvshows.png', 'DefaultTVShows.png')
         self.addDirectoryItem(32026, 'tvshows&url=premiere', 'new-tvshows.png', 'DefaultTVShows.png')
-        self.addDirectoryItem(32006, 'calendar&url=added', 'latest-episodes.png', 'DefaultRecentlyAddedEpisodes.png', queue=True)
+        self.addDirectoryItem(32006, 'calendar&url=added', 'latest-episodes.png', 'DefaultRecentlyAddedEpisodes.png',
+                              queue=True)
         self.addDirectoryItem(32027, 'calendars', 'calendar.png', 'DefaultRecentlyAddedEpisodes.png')
 
         if lite == False:
@@ -200,18 +213,21 @@ class navigator:
 
         self.endDirectory()
 
-
     def mytvshows(self, lite=False):
         self.accountCheck()
 
         if traktCredentials == True and imdbCredentials == True:
-            self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktcollection'))
-            self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
+            self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png',
+                                  context=(32551, 'tvshowsToLibrary&url=traktcollection'))
+            self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png',
+                                  context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
             self.addDirectoryItem(32034, 'tvshows&url=imdbwatchlist', 'imdb.png', 'DefaultTVShows.png')
 
         elif traktCredentials == True:
-            self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktcollection'))
-            self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png', context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
+            self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png',
+                                  context=(32551, 'tvshowsToLibrary&url=traktcollection'))
+            self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png',
+                                  context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
 
         elif imdbCredentials == True:
             self.addDirectoryItem(32032, 'tvshows&url=imdbwatchlist', 'imdb.png', 'DefaultTVShows.png')
@@ -225,8 +241,10 @@ class navigator:
 
         if traktIndicators == True:
             self.addDirectoryItem(32036, 'calendar&url=trakthistory', 'trakt.png', 'DefaultTVShows.png', queue=True)
-            self.addDirectoryItem(32037, 'calendar&url=progress', 'trakt.png', 'DefaultRecentlyAddedEpisodes.png', queue=True)
-            self.addDirectoryItem(32038, 'calendar&url=mycalendar', 'trakt.png', 'DefaultRecentlyAddedEpisodes.png', queue=True)
+            self.addDirectoryItem(32037, 'calendar&url=progress', 'trakt.png', 'DefaultRecentlyAddedEpisodes.png',
+                                  queue=True)
+            self.addDirectoryItem(32038, 'calendar&url=mycalendar', 'trakt.png', 'DefaultRecentlyAddedEpisodes.png',
+                                  queue=True)
 
         self.addDirectoryItem(32040, 'tvUserlists', 'userlists.png', 'DefaultTVShows.png')
 
@@ -239,7 +257,6 @@ class navigator:
             self.addDirectoryItem(32010, 'tvSearch', 'search.png', 'DefaultTVShows.png')
 
         self.endDirectory()
-
 
     def tools(self):
         self.addDirectoryItem(32043, 'openSettings&query=0.0', 'tools.png', 'DefaultAddonProgram.png')
@@ -263,7 +280,8 @@ class navigator:
     def library(self):
         self.addDirectoryItem(32557, 'openSettings&query=4.0', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32558, 'updateLibrary&query=tool', 'library_update.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32559, control.setting('library.movie'), 'movies.png', 'DefaultMovies.png', isAction=False)
+        self.addDirectoryItem(32559, control.setting('library.movie'), 'movies.png', 'DefaultMovies.png',
+                              isAction=False)
         self.addDirectoryItem(32560, control.setting('library.tv'), 'tvshows.png', 'DefaultTVShows.png', isAction=False)
 
         if trakt.getTraktCredentialsInfo():
@@ -285,7 +303,6 @@ class navigator:
 
         self.endDirectory()
 
-
     def search(self):
         self.addDirectoryItem(32001, 'movieSearch', 'search.png', 'DefaultMovies.png')
         self.addDirectoryItem(32002, 'tvSearch', 'search.png', 'DefaultTVShows.png')
@@ -298,7 +315,9 @@ class navigator:
         try:
             control.idle()
 
-            items = [ (control.lang(32001).encode('utf-8'), 'movies'), (control.lang(32002).encode('utf-8'), 'tvshows'), (control.lang(32054).encode('utf-8'), 'seasons'), (control.lang(32038).encode('utf-8'), 'episodes') ]
+            items = [(control.lang(32001).encode('utf-8'), 'movies'), (control.lang(32002).encode('utf-8'), 'tvshows'),
+                     (control.lang(32054).encode('utf-8'), 'seasons'),
+                     (control.lang(32038).encode('utf-8'), 'episodes')]
 
             select = control.selectDialog([i[0] for i in items], control.lang(32049).encode('utf-8'))
 
@@ -312,7 +331,7 @@ class navigator:
             poster, banner, fanart = control.addonPoster(), control.addonBanner(), control.addonFanart()
 
             item = control.item(label=title)
-            item.setInfo(type='Video', infoLabels = {'title': title})
+            item.setInfo(type='Video', infoLabels={'title': title})
             item.setArt({'icon': poster, 'thumb': poster, 'poster': poster, 'banner': banner})
             item.setProperty('Fanart_Image', fanart)
 
@@ -325,21 +344,19 @@ class navigator:
         except:
             return
 
-
     def accountCheck(self):
         if traktCredentials == False and imdbCredentials == False:
             control.idle()
             control.infoDialog(control.lang(32042).encode('utf-8'), sound=True, icon='WARNING')
             sys.exit()
 
-
     def infoCheck(self, version):
         try:
-            control.infoDialog('lastship.square7.ch/forum/', control.lang(32074).encode('utf-8'), time=5000, sound=False)
+            control.infoDialog('lastship.square7.ch/forum/', control.lang(32074).encode('utf-8'), time=5000,
+                               sound=False)
             return '1'
         except:
             return '1'
-
 
     def clearCache(self):
         control.idle()
@@ -377,13 +394,16 @@ class navigator:
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
     def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):
-        try: name = control.lang(name).encode('utf-8')
-        except: pass
+        try:
+            name = control.lang(name).encode('utf-8')
+        except:
+            pass
         url = '%s?action=%s' % (sysaddon, query) if isAction == True else query
         thumb = os.path.join(artPath, thumb) if not artPath == None else icon
         cm = []
         if queue == True: cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-        if not context == None: cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
+        if not context == None: cm.append(
+            (control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
         item = control.item(label=name)
         item.addContextMenuItems(cm)
         item.setArt({'icon': thumb, 'thumb': thumb})
@@ -393,5 +413,3 @@ class navigator:
     def endDirectory(self):
         control.content(syshandle, 'addons')
         control.directory(syshandle, cacheToDisc=True)
-
-

@@ -1,4 +1,13 @@
-[B]1.0.4~nightly11[/B]
+[B]1.0.4[/B]
+- Trakt Bibliothek automatisch Synchronisieren
+- Fix Umlaute Suche	
+- Gesamten Speicher löschen und Metaspeicher löschen hinzugefügt
+- Update jsunpack.py
+- movies.py
+- tvshows.py
+- libtools optimiert (Fehler Behebung)
+- Update cache.py und navigator.py
+- tata wieder hinzugefügt (nur Filme)
 - Update hdfilme
 - Update hdstreams
 
