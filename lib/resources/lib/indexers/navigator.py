@@ -54,8 +54,7 @@ class navigator:
     LOCALNEWS = os.path.join(THISADDONPATH, 'whatsnew.txt')
 
     def root(self):
-        self.addDirectoryItem('[COLOR=lime]News und Updates[/COLOR]', 'newsNavigator', 'icon.png',
-                              'DefaultAddonProgram.png')
+        self.addDirectoryItem('[COLOR=lime]News und Updates[/COLOR]', 'newsNavigator', 'icon.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32010, 'searchNavigator', 'search.png', 'DefaultFolder.png')
         self.addDirectoryItem(32001, 'movieNavigator', 'movies.png', 'DefaultMovies.png')
         self.addDirectoryItem(32002, 'tvNavigator', 'tvshows.png', 'DefaultTVShows.png')
