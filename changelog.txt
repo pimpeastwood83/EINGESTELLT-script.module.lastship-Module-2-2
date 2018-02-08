@@ -1,3 +1,6 @@
+[B]1.0.5~nightly1[/B]
+- cinenator entfent
+
 [B]1.0.4[/B]
 - Trakt Bibliothek automatisch Synchronisieren
 - Fix Umlaute Suche	
