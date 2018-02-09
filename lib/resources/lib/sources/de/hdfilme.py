@@ -4,8 +4,6 @@ import base64
 import re
 import urllib
 import urlparse
-import requests
-
 
 from resources.lib.modules import cleantitle
 from resources.lib.modules import client
@@ -78,9 +76,9 @@ class source:
             r = [(i[0], i[1] if i[1] else '1') for i in r][0]
 
             r = client.request(urlparse.urljoin(self.base_link, self.get_link % r), output='extended')
-            print "print hdfilme r0,r1,r2,r3",r[0],r[1],r[2],r[3]
+
             headers = r[3]
-            headers.update({'Cookie': r[2].get('Set-Cookie'), 'Referer': self.base_link,'host':'94.23.29.163','Upgrade-Insecure-Requests':'1'})
+            headers.update({'Cookie': r[2].get('Set-Cookie'), 'Referer': self.base_link})
             r = r[0]
 
             r += '=' * (-len(r) % 4)
@@ -89,13 +87,15 @@ class source:
             i = [(match[1], match[0]) for match in re.findall('''["']?label\s*["']?\s*[:=]\s*["']?([^"',]+)["']?(?:[^}\]]+)["']?\s*file\s*["']?\s*[:=,]?\s*["']([^"']+)''', r, re.DOTALL)]
             i += [(match[0], match[1]) for match in re.findall('''["']?\s*file\s*["']?\s*[:=,]?\s*["']([^"']+)(?:[^}>\]]+)["']?\s*label\s*["']?\s*[:=]\s*["']?([^"',]+)''', r, re.DOTALL)]
             r = [(x[0].replace('\/', '/'), source_utils.label_to_quality(x[1])) for x in i]
-            
+
             for u, q in r:
                 try:
-                    #tag = directstream.googletag(u)
-                    #print "print hdfilme url u,headers,libencode headers",u,headers,urllib.urlencode(headers)
-                    
-                    sources.append({'source': 'CDN', 'quality': q, 'language': 'de', 'url': u + '|%s' % urllib.urlencode(headers), 'direct': True, 'debridonly': False})
+                    tag = directstream.googletag(u)
+
+                    if tag:
+                        sources.append({'source': 'gvideo', 'quality': tag[0].get('quality', 'SD'), 'language': 'de', 'url': u, 'direct': True, 'debridonly': False})
+                    else:
+                        sources.append({'source': 'CDN', 'quality': q, 'language': 'de', 'url': u + '|%s' % urllib.urlencode(headers), 'direct': True, 'debridonly': False})
                 except:
                     pass
 
@@ -104,8 +104,6 @@ class source:
             return sources
 
     def resolve(self, url):
-        final_url_redirected = requests.get(url, allow_redirects=False)
-        url = final_url_redirected.headers['Location']
         return url
 
     def __search(self, titles, year, season='0'):
