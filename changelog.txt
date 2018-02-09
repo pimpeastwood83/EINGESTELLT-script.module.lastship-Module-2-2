@@ -1,5 +1,6 @@
-[B]1.0.5~nightly1[/B]
+[B]1.0.5~nightly2[/B]
 - cinenator entfent
+- Update hdfilme
 
 [B]1.0.4[/B]
 - Trakt Bibliothek automatisch Synchronisieren
