@@ -1,3 +1,6 @@
+[B]1.0.6~nightly1[/B]
+-  fix hdstreams
+
 [B]1.0.5[/B]
 - cinenator entfent
 - Update hdfilme
