@@ -82,7 +82,7 @@ class source:
 
             sHtmlContent=self.scraper.get(url).content
             
-            pPattern = "loadStream[^>]'([^']+)', '([^']+)', '([^']+).*?"
+            pPattern = "recaptcha[^>]'([^']+)', '([^']+)', '([^']+).*?"
             pPattern += '>.*?>([^"]+)</v-btn>'
             aResult = re.compile(pPattern, re.DOTALL).findall(sHtmlContent)
             
@@ -127,7 +127,7 @@ class source:
             #print "print def get links self,e, h, sLang, sName,token, url", self,e, h, sLang, sName, token, url
             url=url+'/stream'
             # hardcoded german language
-            params={'e':e,'h':h,'lang':'de'}
+            params={'e':e,'h':h,'lang':'de', 'q':'','grecaptcha':''}
             sHtmlContent=self.scraper.post(url,headers={'X-CSRF-TOKEN':token[0],'X-Requested-With':'XMLHttpRequest'},data=params).content
                         
             pattern = 'ct[^>]":[^>]"([^"]+).*?iv[^>]":[^>]"([^"]+).*?s[^>]":[^>]"([^"]+).*?e"[^>]([^}]+)'
