@@ -373,23 +373,37 @@ class sources:
         
         quality = control.setting('hosts.quality')
         if quality == '': quality = '0'
-        
+
         line1 = line2 = line3 = ""
-        
+	debrid_only = control.setting('debrid.only')
+
+	pre_emp =  control.setting('preemptive.termination')
+        pre_emp_limit = control.setting('preemptive.limit')
+
         source_4k = d_source_4k = 0
         source_1080 = d_source_1080 = 0
         source_720 = d_source_720 = 0
         source_sd = d_source_sd = 0
         total = d_total = 0
-        
+
         debrid_list = debrid.debrid_resolvers
         debrid_status = debrid.status()
-        
+
         total_format = '[COLOR %s][B]%s[/B][/COLOR]'
         pdiag_format = ' 4K: %s | 1080p: %s | 720p: %s | SD: %s | %s: %s'.split('|')
         pdiag_bg_format = '4K:%s(%s)|1080p:%s(%s)|720p:%s(%s)|SD:%s(%s)|T:%s(%s)'.split('|')
-        
+
         for i in range(0, 4 * timeout):
+	    if str(pre_emp) == 'true':
+                if quality in ['1','0']:
+                    if (source_1080 + d_source_1080) > int(pre_emp_limit): break
+                elif quality in ['2']:
+                    if (source_720 + d_source_720) > int(pre_emp_limit): break
+                elif quality in ['3']:
+                    if (source_sd + d_source_sd) > int(pre_emp_limit): break
+                else:
+                    if (source_sd + d_source_sd) > int(pre_emp_limit): break
+
             try:
                 if xbmc.abortRequested == True: return sys.exit()
 
@@ -732,7 +746,10 @@ class sources:
     def sourcesFilter(self):
         provider = control.setting('hosts.sort.provider')
         if provider == '': provider = 'false'
-        
+
+        debrid_only = control.setting('debrid.only')
+        if debrid_only == '': debrid_only = 'false'
+
         quality = control.setting('hosts.quality')
         if quality == '': quality = '0'
 
@@ -766,7 +783,8 @@ class sources:
             valid_hoster = set([i['source'] for i in self.sources])
             valid_hoster = [i for i in valid_hoster if d.valid_url('', i)]
             filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster]
-        filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] == False]
+        if debrid_only == 'false' or  debrid.status() == False:
+            filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] == False]
 
         self.sources = filter
       
