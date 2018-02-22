@@ -1,4 +1,5 @@
-[B]1.0.6~nightly1[/B]
+[B]1.0.6~nightly2[/B]
+- Add Funktion nur Premium Links (Bezahllinks) anzeigen
 - fix hdstreams
 
 [B]1.0.5[/B]
