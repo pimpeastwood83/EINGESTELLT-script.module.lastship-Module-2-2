@@ -1,4 +1,5 @@
-[B]1.0.6~nightly2[/B]
+[B]1.0.6~nightly3[/B]
+- Add Trakt on Deck
 - Add Funktion nur Premium Links (Bezahllinks) anzeigen
 - fix hdstreams
 
