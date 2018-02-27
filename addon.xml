@@ -8,9 +8,10 @@
 		<platform>all</platform>
 		<summary lang="en">lastship</summary>
 		<description>Viel Spaß mit LastShip</description>
-		<news lang="de">- Add Option Automatisch Fortsetzen
-- Add Trakt on Deck
-- Add Funktion nur Premium Links (Bezahllinks) anzeigen
+		<news lang="de">- Add Automatisch Fortsetzen Option
+- Add Trakt Angefangene/nicht beendete Episoden Kategorie
+- add preemptive (source.py)
+- Nur Debrid Quellen anzeigen
 - fix hdstreams
 </news>
 	</extension>
