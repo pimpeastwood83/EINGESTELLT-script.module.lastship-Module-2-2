@@ -1,3 +1,7 @@
+[B]1.0.6~nightly4[/B]
+- Add Option Automatisch Fortsetzen
+- Add Trakt Fortestzungspukt (Bookmarks Function), jedoch zur Zeit in Lastship deaktiviert
+
 [B]1.0.6~nightly3[/B]
 - Add Trakt on Deck
 - Add Funktion nur Premium Links (Bezahllinks) anzeigen
