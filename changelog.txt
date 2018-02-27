@@ -3,7 +3,7 @@
 - Add Trakt Fortestzungspukt (Bookmarks Function), jedoch zur Zeit in Lastship deaktiviert
 
 [B]1.0.6~nightly3[/B]
-- Add Trakt on Deck
+- Add Trakt Angefangene/nicht beendete Episoden Kategorie
 - Add Funktion nur Premium Links (Bezahllinks) anzeigen
 - fix hdstreams
 
