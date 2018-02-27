@@ -616,14 +616,20 @@ class episodes:
 
     def calendar(self, url):
         try:
+
             try: url = getattr(self, url + '_link')
             except: pass
-
 
             if self.trakt_link in url and url == self.onDeck_link:
                 self.blist = cache.get(self.trakt_episodes_list, 720, url, self.trakt_user, self.lang)
                 self.list = []
                 self.list = cache.get(self.trakt_episodes_list, 0, url, self.trakt_user, self.lang)
+                self.list = self.list[::-1]
+
+            elif self.trakt_link in url and url == self.progress_link:
+                self.blist = cache.get(self.trakt_progress_list, 720, url, self.trakt_user, self.lang)
+                self.list = []
+                self.list = cache.get(self.trakt_progress_list, 0, url, self.trakt_user, self.lang)
 
             elif self.trakt_link in url and url == self.mycalendar_link:
                 self.blist = cache.get(self.trakt_episodes_list, 720, url, self.trakt_user, self.lang)
