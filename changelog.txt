@@ -1,4 +1,5 @@
-[B]1.0.6~nightly4[/B]
+[B]1.0.6~nightly5[/B]
+- Update Personen Suche (Filme)
 - Add Option Automatisch Fortsetzen
 - Add Trakt Fortestzungspukt (Bookmarks Function), jedoch zur Zeit in Lastship deaktiviert
 
