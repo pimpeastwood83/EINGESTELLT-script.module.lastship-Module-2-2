@@ -1,12 +1,10 @@
-[B]1.0.6~nightly5[/B]
+[B]1.0.6[/B]
+- add streamdream Update
 - Update Personen Suche (Filme)
 - Add Option Automatisch Fortsetzen
 - Add Trakt Fortestzungspukt (Bookmarks Function), jedoch zur Zeit in Lastship deaktiviert
-
-[B]1.0.6~nightly3[/B]
 - Add Trakt Angefangene/nicht beendete Episoden Kategorie
 - Add Funktion nur Premium Links (Bezahllinks) anzeigen
-- fix hdstreams
 
 [B]1.0.5[/B]
 - cinenator entfent
