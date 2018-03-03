@@ -1,3 +1,6 @@
+[B]1.0.7~nigtly1[/B]
+- Fix Streamdream TV-Shows
+
 [B]1.0.6[/B]
 - add streamdream Update
 - Update Personen Suche (Filme)
