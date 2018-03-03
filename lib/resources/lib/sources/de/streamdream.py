@@ -34,7 +34,7 @@ class source:
         self.domains = ['streamdream.ws']
         self.base_link = 'https://streamdream.ws'
         self.search_link = '/searchy.php?ser=%s'
-        self.hoster_link = '/episodeholen2.php'
+        self.hoster_link = '/episodeholen3.php'
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
