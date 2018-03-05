@@ -1,4 +1,4 @@
-[B]1.0.7.1[/B]
+[B]1.0.6.1[/B]
 - Fix Streamdream TV-Shows
 
 [B]1.0.6[/B]
