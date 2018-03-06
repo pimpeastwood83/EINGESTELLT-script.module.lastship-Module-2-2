@@ -1,3 +1,6 @@
+[B]1.0.6.3[/B]
+- Bug Fix, Downgrade auf Stand 1.0.6.1 (Update 1.0.6.2 Fehlerhaft)
+
 [B]1.0.6.2[/B]
 - Fix Foxx
 
