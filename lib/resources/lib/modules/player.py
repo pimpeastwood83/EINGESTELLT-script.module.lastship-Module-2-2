@@ -68,7 +68,7 @@ class player(xbmc.Player):
             item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
             item.setInfo(type='Video', infoLabels = meta)
 			# temp. foxx fix start
-			if 'foxx.to' in url:
+            if url.startswith('http://stream'):
                 item.setContentLookup(False)
                 item.setMimeType('mime/x-type')
             # temp. foxx fix ende
