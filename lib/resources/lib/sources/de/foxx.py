@@ -109,13 +109,14 @@ class source:
 
     def __search(self, titles, year):
         try:
-            query = self.search_link % (urllib.quote_plus(cleantitle.query(titles[0])))
+            query = self.search_link % (urllib.quote_plus(titles[0]))
             query = urlparse.urljoin(self.base_link, query)
 
             r = client.request(query)
-            r = re.findall('href="(.*-Stream)', r)
+            dom_parsed = dom_parser.parse_dom(r, 'div', attrs={'class': 'details'})
 
-            r = [(i, re.findall('\d{4}', i, )[0]) for i in r]
+            r = [(re.findall('href="(.*-Stream)', i.content)[0], re.findall('year">(\d*)', i.content, )[0]) for i in dom_parsed if len(re.findall('de\.png', i.content)) > 0]
+
             r = sorted(r, key=lambda i: int(i[1]), reverse=True)  # with year > no year
             r = [x[0] for x in r if int(x[1]) == int(year)]
 
