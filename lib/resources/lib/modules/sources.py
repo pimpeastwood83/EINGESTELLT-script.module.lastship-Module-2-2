@@ -22,7 +22,6 @@
 # Addon id: plugin.video.lastship
 # Addon Provider: LastShip
 
-
 import sys,re,json,urllib,urlparse,random,datetime,time
 
 from resources.lib.modules import trakt
@@ -934,11 +933,7 @@ class sources:
             headers = urllib.quote_plus(headers).replace('%3D', '=') if ' ' in headers else headers
             headers = dict(urlparse.parse_qsl(headers))
 
-			#Start Quick & Dirty Hack Nov2017 for Foxx fix
-            if url.startswith('http://stream'):
-                pass
-            #End Quick & Dirty Hack
-            elif url.startswith('http') and '.m3u8' in url:
+            if url.startswith('http') and '.m3u8' in url:
                 result = client.request(url.split('|')[0], headers=headers, output='geturl', timeout='20')
                 if result == None: raise Exception()
 
