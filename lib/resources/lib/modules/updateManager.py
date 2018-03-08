@@ -124,10 +124,6 @@ def _getXmlString(xml_url):
         log_utils.log(e)
 
 def updateLastShip():
-    import sys
-    sys.path.append("C:\Program Files\JetBrains\PyCharm 2017.3.3\debug-eggs\pycharm-debug.egg")
-    import pydevd
-    pydevd.settrace('localhost', port=12345, stdoutToServer=True, stderrToServer=True)
     try:
         scriptmoduleLastship()
         pluginVideoLastship()
