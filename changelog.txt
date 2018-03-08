@@ -1,3 +1,6 @@
+~dev
+Update Manger hinzugefügt (navigator.py)
+
 [B]1.0.6.4[/B]
 - New Fix Foxx
 
