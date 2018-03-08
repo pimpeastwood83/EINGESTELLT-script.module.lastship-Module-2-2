@@ -1,3 +1,15 @@
+[B]1.0.6.4[/B]
+- New Fix Foxx
+
+[B]1.0.6.3[/B]
+- Bug Fix, Downgrade auf Stand 1.0.6.1 (Update 1.0.6.2 Fehlerhaft)
+
+[B]1.0.6.2[/B]
+- Fix Foxx
+
+[B]1.0.6.1[/B]
+- Fix Streamdream TV-Shows
+
 [B]1.0.6[/B]
 - add streamdream Update
 - Update Personen Suche (Filme)
