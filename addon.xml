@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.module.lastship" name="Lastship Module" version="1.0.6.4" provider-name="LastShip">
+<addon id="script.module.lastship" name="Lastship Module" version="1.0.6.5~nightly1" provider-name="LastShip">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>
@@ -8,7 +8,10 @@
 		<platform>all</platform>
 		<summary lang="en">lastship</summary>
 		<description>Viel Spaß mit LastShip</description>
-		<news lang="de">- New Fix Foxx
+		<news lang="de">
+- Update Foxx Suche
+- Update player.py  for foxx
+- Fix Personen Suche,Fehlermeldung anzeigen wenn keine Eintrag
 </news>
 	</extension>
 </addon>
