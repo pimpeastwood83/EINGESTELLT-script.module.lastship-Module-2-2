@@ -37,7 +37,7 @@ REMOTE_MODULE_COMMITS = "https://api.github.com/repos/lastship/script.module.las
 REMOTE_MODULE_DOWNLOADS = "https://github.com/lastship/script.module.lastship/archive/nightly.zip"
 
 ## plugin.video.lastship
-REMOTE_PLUGIN_COMMITS = "https://api.github.com/repos/lastship/plugin.video.xstream/commits/nightly"
+REMOTE_PLUGIN_COMMITS = "https://api.github.com/repos/lastship/plugin.video.lastship/commits/nightly"
 REMOTE_PLUGIN_DOWNLOADS = "https://github.com/lastship/plugin.video.lastship/archive/nightly.zip"
 
 ## Filename of the update File.
