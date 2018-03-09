@@ -162,7 +162,11 @@ class movies:
                 if idx == True: self.worker()
 
 
-            if idx == True and create_directory == True: self.movieDirectory(self.list)
+            if self.list == None or len(self.list) == 0:
+                control.idle()
+                control.infoDialog(control.lang(32709).encode('utf-8'), time=8000)
+            elif idx == True and create_directory == True:
+                    self.movieDirectory(self.list)
             return self.list
         except:
             pass
@@ -359,7 +363,11 @@ class movies:
             self.list = cache.get(self.imdb_person_list, 1, url)
 
         for i in range(0, len(self.list)): self.list[i].update({'action': 'movies'})
-        self.addDirectory(self.list)
+        if self.list == None or len(self.list) == 0:
+            control.idle()
+            control.infoDialog(control.lang(32709).encode('utf-8'), time=8000)
+        else:
+            self.addDirectory(self.list)
         return self.list
 
 

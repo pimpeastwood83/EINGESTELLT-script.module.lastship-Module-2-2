@@ -145,7 +145,10 @@ class tvshows:
                 if idx == True: self.worker()
 
 
-            if idx == True and create_directory == True: self.tvshowDirectory(self.list)
+            if self.list == None or len(self.list) == 0:
+                control.idle()
+                control.infoDialog(control.lang(32709).encode('utf-8'), time=8000)
+            elif idx == True and create_directory == True: self.tvshowDirectory(self.list)
             return self.list
         except:
             pass
@@ -392,7 +395,12 @@ class tvshows:
 
         log_utils.log('url : ' + str(len(self.list)))
         for i in range(0, len(self.list)): self.list[i].update({'action': 'tvshows'})
-        self.addDirectory(self.list)
+
+        if self.list == None or len(self.list) == 0:
+            control.idle()
+            control.infoDialog(control.lang(32709).encode('utf-8'), time=8000)
+        else:
+            self.addDirectory(self.list)
         return self.list
 
 
