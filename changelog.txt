@@ -1,4 +1,5 @@
-[B]1.0.6.5~nightly1[/B]
+[B]1.0.6.5~nightly2[/B]
+- movie2z entfernt (Seite wurde geschlossen)
 - Upadate Foxx Suche
 - Update player.py  für foxx
 - Fix Personen Suche,Fehlermeldung anzeigen wenn keine Eintrag verfügbar
