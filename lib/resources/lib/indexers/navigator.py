@@ -80,6 +80,9 @@ class navigator:
         if downloads == True:
             self.addDirectoryItem(32009, 'downloadNavigator', 'downloads.png', 'DefaultFolder.png')
 
+        if control.setting('DevUpdate') == 'true':
+            self.addDirectoryItem(32075, 'devUpdateNavigator', 'tools.png', 'DefaultAddonProgram.png')
+
         self.endDirectory()
 
     #######################################################################
