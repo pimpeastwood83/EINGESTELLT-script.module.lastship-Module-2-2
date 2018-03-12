@@ -1,10 +1,12 @@
+[B]1.0.6.5~nightly4[/B]
+- Update Manger hinzugefügt (navigator.py)
+
 [B]1.0.6.5~nightly3[/B]
 - Update movie2k-ac auf movie2k-sh
 - movie2z entfernt (Seite wurde geschlossen)
 - Upadate Foxx Suche
 - Update player.py  für foxx
 - Fix Personen Suche,Fehlermeldung anzeigen wenn keine Eintrag verfügbar
-Update Manger hinzugefügt (navigator.py)
 
 [B]1.0.6.4[/B]
 - New Fix Foxx
