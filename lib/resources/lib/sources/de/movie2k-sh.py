@@ -49,7 +49,6 @@ class source:
         try:
             if not url:
                 return sources
-
             query = urlparse.urljoin(self.base_link, url)
             r = client.request(query)
 
@@ -59,15 +58,28 @@ class source:
 
             for i in r:
                 link = dom_parser.parse_dom(i,'a')
-                if link == None or len(link) == 0: continue
+                if link is None or len(link) == 0:
+                    continue
                 link = link[0]
                 hoster = link.content
 
-                valid, hoster = source_utils.is_host_valid(hoster, hostDict)
-                if not valid: continue
+                #openload would need another request
+                if 'openload' in hoster:
+                    continue
 
-                link = link.attrs["href"]
-                quality = 'SD'
+                valid, hoster = source_utils.is_host_valid(hoster, hostDict)
+                if not valid:
+                    continue
+
+                link = link.attrs["href"].strip('\r')
+
+                if '5.gif' in i.content:
+                    quality = '1080p'
+                elif '4.gif' in i.content:
+                    quality = 'HD'
+                else:
+                    quality = 'SD'
+
                 sources.append({'source': hoster, 'quality': quality, 'language': 'de', 'url': link, 'direct': False, 'debridonly': False, 'checkquality': True})
 
             return sources
@@ -98,6 +110,6 @@ class source:
                 if title in t:
                     return source_utils.strip_domain(i[0]['href'])
                 else:
-                    return
+                    continue
         except:
             return
