@@ -32,8 +32,8 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['de']
-        self.domains = ['movie2k.ac']
-        self.base_link = 'http://www.movie2k.ac'
+        self.domains = ['movie2k.sh']
+        self.base_link = 'http://www.movie2k.sh'
         self.search_link = '/search/%s'
 
     def movie(self, imdb, title, localtitle, aliases, year):
@@ -46,7 +46,6 @@ class source:
 
     def sources(self, url, hostDict, hostprDict):
         sources = []
-
         try:
             if not url:
                 return sources
@@ -59,20 +58,17 @@ class source:
             r = dom_parser.parse_dom(r, 'tr')
 
             for i in r:
-                if re.search('(?<=">)(\n.*?)(?=<\/a>)', i[1]).group().strip():
-                    hoster = re.search('(?<=">)(\n.*?)(?=<\/a>)', i[1]).group().strip()
-                    link = re.search('(?<=href=\")(.*?)(?=\")', i[1]).group()
-                    rel = re.search('(?<=oddCell qualityCell">)(\n.*?)(?=<\/td>)', i[1]).group().strip()
+                link = dom_parser.parse_dom(i,'a')
+                if link == None or len(link) == 0: continue
+                link = link[0]
+                hoster = link.content
 
-                    valid, hoster = source_utils.is_host_valid(hoster, hostDict)
-                    if not valid: continue
+                valid, hoster = source_utils.is_host_valid(hoster, hostDict)
+                if not valid: continue
 
-                    try:
-                        quality, info = source_utils.get_release_quality(rel)
-                    except:
-                        quality = 'SD'
-                    
-                    sources.append({'source': hoster, 'quality': quality, 'language': 'de', 'url': link, 'direct': False, 'debridonly': False, 'checkquality': True})
+                link = link.attrs["href"]
+                quality = 'SD'
+                sources.append({'source': hoster, 'quality': quality, 'language': 'de', 'url': link, 'direct': False, 'debridonly': False, 'checkquality': True})
 
             return sources
         except:
@@ -82,6 +78,7 @@ class source:
         return url
 
     def __search(self, titles):
+
         try:
             query = self.search_link % (urllib.quote_plus(urllib.quote_plus(cleantitle.query(titles[0]))))
             query = urlparse.urljoin(self.base_link, query)
