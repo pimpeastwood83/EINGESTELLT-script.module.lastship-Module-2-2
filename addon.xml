@@ -8,7 +8,8 @@
 		<platform>all</platform>
 		<summary lang="en">lastship</summary>
 		<description>Viel Spaß mit LastShip</description>
-		<news lang="de">- movie2z entfernt (Seite wurde geschlossen)
+		<news lang="de">- add szene-streamz
+- movie2z entfernt (Seite wurde geschlossen)
 - Upadate Foxx Suche
 - Update player.py  für foxx
 - Fix Personen Suche,Fehlermeldung anzeigen wenn keine Eintrag
