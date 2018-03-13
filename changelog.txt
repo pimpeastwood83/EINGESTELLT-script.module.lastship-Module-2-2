@@ -1,4 +1,4 @@
-[B]1.0.6.5~nightly4[/B]
+[B]1.0.6.5[/B]
 - add szene-streamz
 - Update Manger hinzugefügt (navigator.py)
 
