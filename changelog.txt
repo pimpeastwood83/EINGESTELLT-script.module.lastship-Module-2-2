@@ -1,3 +1,6 @@
+[B]1.0.6.6~dev1[/B]
+- add kinoger (nur in script.module.lastship)
+
 [B]1.0.6.5[/B]
 - add szene-streamz
 - Update Manger hinzugefügt (navigator.py)
