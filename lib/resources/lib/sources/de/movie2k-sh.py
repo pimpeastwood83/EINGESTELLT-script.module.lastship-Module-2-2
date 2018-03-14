@@ -73,8 +73,6 @@ class source:
                     link = query+link
 
                 if '5.gif' in i.content:
-                    quality = '1080p'
-                elif '4.gif' in i.content:
                     quality = 'HD'
                 else:
                     quality = 'SD'
