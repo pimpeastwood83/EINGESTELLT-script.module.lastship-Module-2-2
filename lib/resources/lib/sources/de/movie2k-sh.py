@@ -79,7 +79,7 @@ class source:
 
                 sources.append({'source': hoster, 'quality': quality, 'language': 'de', 'url': link, 'direct': False, 'debridonly': False, 'checkquality': True})
 
-                if count == 10:
+                if count == 5:
                     break
 
             return sources
