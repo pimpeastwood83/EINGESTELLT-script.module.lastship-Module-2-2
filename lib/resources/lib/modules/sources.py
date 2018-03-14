@@ -34,6 +34,7 @@ from resources.lib.modules import debrid
 from resources.lib.modules import workers
 from resources.lib.modules import source_utils
 from resources.lib.modules import log_utils
+from resources.lib.modules import source_faultlog
 from resources.lib.modules import thexem
 
 try: from sqlite3 import dbapi2 as database
@@ -327,9 +328,15 @@ class sources:
         sourceDict = [(i[0], i[1], i[1].language) for i in sourceDict]
         sourceDict = [(i[0], i[1]) for i in sourceDict if any(x in i[2] for x in language)]
 
+
         try: sourceDict = [(i[0], i[1], control.setting('provider.' + i[0])) for i in sourceDict]
         except: sourceDict = [(i[0], i[1], 'true') for i in sourceDict]
         sourceDict = [(i[0], i[1]) for i in sourceDict if not i[2] == 'false']
+
+
+        if control.setting('FaultLogger.enabled') == 'true':
+            source_faultlog.init()
+            sourceDict = [(i[0], i[1]) for i in sourceDict if source_faultlog.isEnabled(i[0])]
 
         sourceDict = [(i[0], i[1], i[1].priority) for i in sourceDict]
 
@@ -729,13 +736,7 @@ class sources:
             yes = control.yesnoDialog(control.lang(32407).encode('utf-8'), '', '')
             if not yes: return
 
-            control.makeFile(control.dataPath)
-            dbcon = database.connect(control.providercacheFile)
-            dbcur = dbcon.cursor()
-            dbcur.execute("DROP TABLE IF EXISTS rel_src")
-            dbcur.execute("DROP TABLE IF EXISTS rel_url")
-            dbcur.execute("VACUUM")
-            dbcon.commit()
+            cache.cache_clear_providers()
 
             control.infoDialog(control.lang(32408).encode('utf-8'), sound=True, icon='INFO')
         except:

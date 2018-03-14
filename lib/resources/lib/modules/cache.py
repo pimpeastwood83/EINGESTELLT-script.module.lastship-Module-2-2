@@ -138,13 +138,14 @@ def cache_clear_providers():
     try:
         cursor = _get_connection_cursor_providers()
 
-        for t in ['rel_src', 'rel_url']:
+        for t in ['rel_src', 'rel_url', 'faultLog']:
             try:
                 cursor.execute("DROP TABLE IF EXISTS %s" % t)
                 cursor.execute("VACUUM")
                 cursor.commit()
             except:
                 pass
+        cache_insert("source_fault_last_seen","0")
     except:
         pass
 

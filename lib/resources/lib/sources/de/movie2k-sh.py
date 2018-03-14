@@ -26,6 +26,7 @@ import base64
 from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import source_utils
+from resources.lib.modules import source_faultlog
 from resources.lib.modules import dom_parser
 
 
@@ -84,6 +85,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -100,6 +102,7 @@ class source:
                 return url
 
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagResolve)
             return url
 
     def __search(self, titles):
@@ -124,5 +127,7 @@ class source:
                     return source_utils.strip_domain(i[0]['href'])
                 else:
                     continue
+            return ""
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagSearch)
             return
