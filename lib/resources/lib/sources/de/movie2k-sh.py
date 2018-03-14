@@ -21,6 +21,7 @@
 import re
 import urllib
 import urlparse
+import base64
 
 from resources.lib.modules import cleantitle
 from resources.lib.modules import client
@@ -56,22 +57,20 @@ class source:
             r = dom_parser.parse_dom(r, 'tbody')
             r = dom_parser.parse_dom(r, 'tr')
 
-            for i in r:
+            for count, i in enumerate(r):
                 link = dom_parser.parse_dom(i,'a')
                 if link is None or len(link) == 0:
                     continue
                 link = link[0]
                 hoster = link.content
 
-                #openload would need another request
-                if 'openload' in hoster:
-                    continue
-
                 valid, hoster = source_utils.is_host_valid(hoster, hostDict)
                 if not valid:
                     continue
 
                 link = link.attrs["href"].strip('\r')
+                if link.startswith('?'):
+                    link = query+link
 
                 if '5.gif' in i.content:
                     quality = '1080p'
@@ -82,12 +81,28 @@ class source:
 
                 sources.append({'source': hoster, 'quality': quality, 'language': 'de', 'url': link, 'direct': False, 'debridonly': False, 'checkquality': True})
 
+                if count == 10:
+                    break
+
             return sources
         except:
             return sources
 
     def resolve(self, url):
-        return url
+        try:
+            if self.base_link in url:
+                #scrape it once again
+                r = client.request(url)
+                #get base64 iframe
+                s = re.compile("dingdong\('([^']+)").findall(r)[0]
+                s = base64.b64decode(s)
+                s = re.compile("src=\"([^\"]+)").findall(s)[0]
+                return s.strip('/')
+            else:
+                return url
+
+        except:
+            return url
 
     def __search(self, titles):
 
