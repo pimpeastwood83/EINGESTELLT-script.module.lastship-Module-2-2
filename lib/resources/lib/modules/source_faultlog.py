@@ -29,7 +29,7 @@ triggerCacheSetting = "source_fault_last_seen"
 
 def init():
     now = int(time.time())
-    timelimit = now - 60*60*
+    timelimit = now - 60*60*hoursTillRecheck
     lastSeen = cache.cache_get(triggerCacheSetting)
     if lastSeen is not None and int(lastSeen["value"]) > timelimit:
         return
