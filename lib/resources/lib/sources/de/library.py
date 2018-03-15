@@ -21,6 +21,7 @@ import urllib, urlparse, json
 
 from resources.lib.modules import control
 from resources.lib.modules import cleantitle
+from resources.lib.modules import source_faultlog
 
 
 class source:
@@ -154,6 +155,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):

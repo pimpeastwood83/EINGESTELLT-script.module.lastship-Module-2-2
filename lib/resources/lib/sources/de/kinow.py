@@ -28,6 +28,7 @@ from resources.lib.modules import control
 from resources.lib.modules import directstream
 from resources.lib.modules import source_utils
 from resources.lib.modules import dom_parser
+from resources.lib.modules import source_faultlog
 
 class source:
     def __init__(self):
@@ -139,6 +140,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -156,6 +158,7 @@ class source:
                     return self.__google(url)
                 return url
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagResolve)
             return
 
     def __search(self, titles, year, content):
@@ -184,6 +187,7 @@ class source:
 
             return source_utils.strip_domain(r)
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return
 
     def __google(self, url):
