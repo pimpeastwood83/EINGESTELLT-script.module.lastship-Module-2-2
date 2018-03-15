@@ -26,6 +26,7 @@ from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import source_utils
 from resources.lib.modules import dom_parser
+from resources.lib.modules import source_faultlog
 
 
 class source:
@@ -133,6 +134,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -166,4 +168,5 @@ class source:
 
             return url if imdb in r else None
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return

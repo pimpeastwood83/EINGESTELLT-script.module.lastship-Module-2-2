@@ -27,6 +27,7 @@ from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import source_utils
 from resources.lib.modules import dom_parser
+from resources.lib.modules import source_faultlog
 
 
 class source:
@@ -84,6 +85,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -100,6 +102,7 @@ class source:
             url = u[-1].encode('utf-8')
             return url
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagResolve)
             return
 
     def __search(self, imdb, titles, year):
@@ -146,6 +149,7 @@ class source:
 
             return source_utils.strip_domain(url)
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return
 
     def __get_base_url(self, fallback):
