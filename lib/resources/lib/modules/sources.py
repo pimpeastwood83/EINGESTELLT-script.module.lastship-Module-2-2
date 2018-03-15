@@ -333,8 +333,9 @@ class sources:
         except: sourceDict = [(i[0], i[1], 'true') for i in sourceDict]
         sourceDict = [(i[0], i[1]) for i in sourceDict if not i[2] == 'false']
 
-
-        if control.setting('FaultLogger.enabled') == 'true':
+        try: faultLoggerEnable = control.setting('FaultLogger.enabled')
+        except: faultLoggerEnable = "false"
+        if faultLoggerEnable == 'true':
             source_faultlog.init()
             sourceDict = [(i[0], i[1]) for i in sourceDict if source_faultlog.isEnabled(i[0])]
 

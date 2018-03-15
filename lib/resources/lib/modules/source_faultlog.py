@@ -20,12 +20,16 @@ tagScrape = "SCRAPE"
 tagDisabled = "DISABLED"
 
 ######### Settings
-maxFaultsPerDay = int(control.setting('FaultLogger.numErrors'))
+try: maxFaultsPerDay = int(control.setting('FaultLogger.numErrors'))
+except: maxFaultsPerDay = 10
+
+try: hoursTillRecheck = int(control.setting('FaultLogger.recheckHours'))
+except: hoursTillRecheck = 24
 triggerCacheSetting = "source_fault_last_seen"
 
 def init():
     now = int(time.time())
-    timelimit = now - 60*60*int(control.setting('FaultLogger.recheckHours'))
+    timelimit = now - 60*60*
     lastSeen = cache.cache_get(triggerCacheSetting)
     if lastSeen is not None and int(lastSeen["value"]) > timelimit:
         return
