@@ -92,6 +92,9 @@ class source:
 
                 x = dom_parser.parse_dom(i, 'td', attrs={'class': 'name'}, req='data-bind')
 
+                if len(x) == 0:
+                    continue
+
                 hoster = re.search("(?<=>).*$", x[0][1])
                 hoster = hoster.group().lower()
 

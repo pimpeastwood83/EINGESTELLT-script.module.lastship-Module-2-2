@@ -135,9 +135,12 @@ class source:
             r = dom_parser.parse_dom(r, 'article')
             r = dom_parser.parse_dom(r, 'a', attrs={'class': 'rb'}, req='href')
             r = [(i.attrs['href'], i.content) for i in r]
-            r = [i[0] for i in r if cleantitle.get(i[1]) in t][0]
+            r = [i[0] for i in r if cleantitle.get(i[1]) in t]
 
-            return source_utils.strip_domain(r)
+            if len(r) > 0:
+                return source_utils.strip_domain(r[0])
+
+            return
         except:
             source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return

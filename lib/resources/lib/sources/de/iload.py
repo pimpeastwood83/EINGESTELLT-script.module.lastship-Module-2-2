@@ -157,7 +157,10 @@ class source:
             r = dom_parser.parse_dom(r, 'table', attrs={'class': 'row'})
             r = dom_parser.parse_dom(r, 'td', attrs={'class': 'list-name'})
             r = dom_parser.parse_dom(r, 'a', req='href')
-            r = [i.attrs['href']for i in r if i and cleantitle.get(i.content) in t][0]
+            r = [i.attrs['href']for i in r if i and cleantitle.get(i.content) in t]
+            if len(r) == 0 :
+                return None
+            r = r[0]
 
             url = source_utils.strip_domain(r)
 

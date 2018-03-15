@@ -141,9 +141,11 @@ class source:
             r = [(i[0], i[1], re.findall('(.+?) \((\d{4})\)?', i[1])) for i in r]
             r = [(i[0], i[2][0][0] if len(i[2]) > 0 else i[1], i[2][0][1] if len(i[2]) > 0 else '0') for i in r]
             r = sorted(r, key=lambda i: int(i[2]), reverse=True)  # with year > no year
-            r = [i[0] for i in r if cleantitle.get(i[1]) in t and i[2] in y][0]
+            r = [i[0] for i in r if cleantitle.get(i[1]) in t and i[2] in y]
 
-            return source_utils.strip_domain(r)
+            if len(r) > 0 :
+                return source_utils.strip_domain(r[0])
+            return ""
         except:
             source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return

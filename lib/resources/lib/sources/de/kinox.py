@@ -149,9 +149,11 @@ class source:
             r = [(i[0], i[1], re.findall('.+?(\d+)\.', i[2])) for i in r]
             r = [(i[0], i[1], i[2][0] if len(i[2]) > 0 else '0') for i in r]
             r = sorted(r, key=lambda i: int(i[2]))  # german > german/subbed
-            r = [i[0] for i in r if i[2] in l][0]
+            r = [i[0] for i in r if i[2] in l]
 
-            return source_utils.strip_domain(r)
+            if len(r) > 0 :
+                return source_utils.strip_domain(r[0])
+            return ""
         except:
             source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return

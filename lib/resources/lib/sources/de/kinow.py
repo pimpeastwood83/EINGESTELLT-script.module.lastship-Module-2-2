@@ -183,9 +183,11 @@ class source:
                     x.append((i[0], re.search('(.*?)(?=\s<)', i[1]).group(), re.search('(?<=<i>\().*$', i[1]).group(), i[2]))
                 else:
                     x.append((i[0], i[1], i[1], i[2]))
-            r = [i[0] for i in x if (cleantitle.get(i[1]) in t or cleantitle.get(i[2]) in t) and i[3] == year][0]
+            r = [i[0] for i in x if (cleantitle.get(i[1]) in t or cleantitle.get(i[2]) in t) and i[3] == year]
 
-            return source_utils.strip_domain(r)
+            if len(r) > 0 :
+                return source_utils.strip_domain(r[0])
+            return ""
         except:
             source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return
