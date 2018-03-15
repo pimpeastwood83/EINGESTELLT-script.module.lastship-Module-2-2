@@ -29,7 +29,6 @@ from resources.lib.modules import client
 from resources.lib.modules import directstream
 from resources.lib.modules import dom_parser
 from resources.lib.modules import source_utils
-from resources.lib.modules import source_faultlog
 
 class source:
     def __init__(self):
@@ -74,7 +73,6 @@ class source:
                 url = self.__search([tvshowtitle] + aliases, year, season, episode)
             return url
         except:
-            source_faultlog.logFault(__name__, source_faultlog.tagScrape)
             return
 
     def sources(self, url, hostDict, hostprDict):
@@ -98,10 +96,11 @@ class source:
                 base_url = re.sub('index\.m3u8\?token=[\w\-]+[^/$]*', '', result)
 
                 r = client.request(result, headers=headers)
+                print "print tata r content", r
                 r = [(i[0], i[1]) for i in re.findall('#EXT-X-STREAM-INF:.*?RESOLUTION=\d+x(\d+)[^\n]+\n([^\n]+)', r, re.DOTALL) if i]
                 r = [(source_utils.label_to_quality(i[0]), i[1] + source_utils.append_headers(headers)) for i in r]
                 r = [{'quality': i[0], 'url': base_url+i[1]} for i in r]
-                for i in r: sources.append({'source': 'CDN', 'quality': i['quality'], 'language': 'de', 'url': i['url'], 'direct': True, 'debridonly': False})
+                for i in r: sources.append({'source': 'CDN', 'quality': '720p', 'language': 'de', 'url': i['url'], 'direct': True, 'debridonly': False})
             elif result:
                 result = [i.get('link_mp4') for i in result]
                 result = [i for i in result if i]
@@ -111,7 +110,6 @@ class source:
 
             return sources
         except:
-            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return
 
     def resolve(self, url):
@@ -131,14 +129,10 @@ class source:
             r = [(i[0][0].attrs['href'], re.findall('calendar.+?>.+?(\d{4})', ''.join([x.content for x in i[1]]))) for i in r if i[0] and i[1]]
             r = [(i[0], i[1][0] if len(i[1]) > 0 else '0') for i in r]
             r = sorted(r, key=lambda i: int(i[1]), reverse=True)  # with year > no year
-            r = [i[0] for i in r if i[1] in y]
+            r = [i[0] for i in r if i[1] in y][0]
 
-            url = ""
-            if len(r) > 0 :
-                url =  source_utils.strip_domain(r[0])
-            return url
+            return source_utils.strip_domain(r)
         except:
-            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return
 
     def __search(self, titles, year, season=0, episode=False):
@@ -176,25 +170,18 @@ class source:
                     f.append((_url, _year))
             r = f
             r = sorted(r, key=lambda i: int(i[1]), reverse=True)  # with year > no year
-            r = [i[0] for i in r if r[0]]
+            r = [i[0] for i in r if r[0]][0]
 
-            url = ""
-            if len(r) > 0 :
-                url =  source_utils.strip_domain(r[0])
-
+            url = source_utils.strip_domain(r)
             if episode:
                 r = client.request(urlparse.urljoin(self.base_link, url))
                 r = dom_parser.parse_dom(r, 'div', attrs={'class': 'season-list'})
                 r = dom_parser.parse_dom(r, 'li')
                 r = dom_parser.parse_dom(r, 'a', req='href')
                 r = [(i.attrs['href'], i.content) for i in r]
-                r = [i[0] for i in r if i[1] and int(i[1]) == int(episode)]
-
-                if len(r) > 0 :
-                    url =  source_utils.strip_domain(r[0])
-
+                r = [i[0] for i in r if i[1] and int(i[1]) == int(episode)][0]
+                url = source_utils.strip_domain(r)
             return url
         except:
-            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return
 
