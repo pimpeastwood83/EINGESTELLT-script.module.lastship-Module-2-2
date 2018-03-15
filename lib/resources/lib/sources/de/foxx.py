@@ -28,6 +28,7 @@ from resources.lib.modules import client
 from resources.lib.modules import dom_parser
 from resources.lib.modules import source_utils
 from resources.lib.modules import tvmaze
+from resources.lib.modules import source_faultlog
 
 class source:
     def __init__(self):
@@ -101,6 +102,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -120,6 +122,11 @@ class source:
             r = sorted(r, key=lambda i: int(i[1]), reverse=True)  # with year > no year
             r = [x[0] for x in r if int(x[1]) == int(year)]
 
-            return source_utils.strip_domain(r[0])
+            if len(r) > 0 :
+                return source_utils.strip_domain(r[0])
+
+            return ""
+
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return

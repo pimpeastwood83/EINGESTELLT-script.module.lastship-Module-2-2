@@ -10,6 +10,7 @@ from resources.lib.modules import client
 from resources.lib.modules import directstream
 from resources.lib.modules import source_utils
 from resources.lib.modules import dom_parser
+from resources.lib.modules import source_faultlog
 
 
 class source:
@@ -101,6 +102,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -131,10 +133,15 @@ class source:
             r = [(i[0], i[3][0][0] if len(i[3]) > 0 else i[1], i[2], i[3][0][1] if len(i[3]) > 0 else '0') for i in r]
             r = [(i[0], i[1].replace(' hd', ''), i[2], '1' if int(season) > 0 and i[3] == '0' else i[3]) for i in r]
             r = sorted(r, key=lambda i: int(i[2]), reverse=True)  # with year > no year
-            r = [i[0]for i in r if cleantitle.get(i[1]) in t and i[2] in y and int(i[3]) == int(season)][0]
+            r = [i[0]for i in r if cleantitle.get(i[1]) in t and i[2] in y and int(i[3]) == int(season)]
+            if len(r) > 0:
+                r = r[0]
+            else:
+                return
 
             url = source_utils.strip_domain(r)
             url = url.replace('-info', '-stream')
             return url
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return

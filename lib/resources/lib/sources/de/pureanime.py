@@ -29,6 +29,7 @@ from resources.lib.modules import tvmaze
 from resources.lib.modules import anilist
 from resources.lib.modules import source_utils
 from resources.lib.modules import dom_parser
+from resources.lib.modules import source_faultlog
 
 
 class source:
@@ -87,6 +88,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -111,4 +113,5 @@ class source:
             r = [[x.attrs['href'] for x in dom_parser.parse_dom(i, 'a', req='href')] + [x.attrs['src'] for x in dom_parser.parse_dom(i, 'iframe', req='src')] for i in r]
             return r[0]
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return

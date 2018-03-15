@@ -27,6 +27,7 @@ from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import dom_parser
 from resources.lib.modules import source_utils
+from resources.lib.modules import source_faultlog
 
 
 class source:
@@ -101,6 +102,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -118,6 +120,7 @@ class source:
 
             return h_url
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagResolve)
             return
 
     def __search(self, titles):
@@ -132,9 +135,13 @@ class source:
             r = dom_parser.parse_dom(r, 'article')
             r = dom_parser.parse_dom(r, 'a', attrs={'class': 'rb'}, req='href')
             r = [(i.attrs['href'], i.content) for i in r]
-            r = [i[0] for i in r if cleantitle.get(i[1]) in t][0]
+            r = [i[0] for i in r if cleantitle.get(i[1]) in t]
 
-            return source_utils.strip_domain(r)
+            if len(r) > 0:
+                return source_utils.strip_domain(r[0])
+
+            return
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return
 

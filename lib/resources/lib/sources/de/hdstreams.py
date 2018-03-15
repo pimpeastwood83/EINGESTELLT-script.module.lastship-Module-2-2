@@ -33,6 +33,7 @@ from resources.lib.modules import pyaes
 #from resources.lib.modules import source_utils
 #from resources.lib.modules import dom_parser
 from resources.lib.modules import cfscrape
+from resources.lib.modules import source_faultlog
 
 
 
@@ -121,6 +122,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def __getlinks(self,e, h, sLang, sName,token,url):
@@ -193,7 +195,9 @@ class source:
             pattern = '<meta name="csrf-token" content="([^"]+)">'
             string = str(sHtmlContent)
             token = re.compile(pattern, flags=re.I | re.M).findall(string)
-            print "print hdstreams.org shtml entry token", token[0]
+            #print "print hdstreams.org shtml entry token", token[0]
+            if len(token) == 0:
+                return #No Entry found?
             # first iteration of session object to be parsed for search
             #sHtmlContent=self.scraper.get(self.search % imdb).content
             #sHtmlContent=self.scraper.get(self.search % imdb).content
@@ -208,6 +212,7 @@ class source:
                 
             return url
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return
 
     def __get_ajax_object(self, html=None):

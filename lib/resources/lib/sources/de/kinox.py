@@ -27,6 +27,7 @@ from resources.lib.modules import cache
 from resources.lib.modules import client
 from resources.lib.modules import source_utils
 from resources.lib.modules import dom_parser
+from resources.lib.modules import source_faultlog
 
 
 class source:
@@ -115,6 +116,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -132,6 +134,7 @@ class source:
 
             return r
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagResolve)
             return
 
     def __search(self, imdb):
@@ -146,10 +149,13 @@ class source:
             r = [(i[0], i[1], re.findall('.+?(\d+)\.', i[2])) for i in r]
             r = [(i[0], i[1], i[2][0] if len(i[2]) > 0 else '0') for i in r]
             r = sorted(r, key=lambda i: int(i[2]))  # german > german/subbed
-            r = [i[0] for i in r if i[2] in l][0]
+            r = [i[0] for i in r if i[2] in l]
 
-            return source_utils.strip_domain(r)
+            if len(r) > 0 :
+                return source_utils.strip_domain(r[0])
+            return ""
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return
 
     def __get_base_url(self, fallback):

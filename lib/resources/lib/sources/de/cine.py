@@ -25,6 +25,7 @@ import urlparse
 
 from resources.lib.modules import client
 from resources.lib.modules import source_utils
+from resources.lib.modules import source_faultlog
 
 
 class source:
@@ -55,6 +56,8 @@ class source:
 
             data = client.request(urlparse.urljoin(self.base_link, self.request_link), post=data, XHR=True)
             data = json.loads(data)
+            if data['status'] == False:
+                return sources
             data = [(i, data['links'][i]) for i in data['links'] if 'links' in data]
             data = [(i[0], i[1][0], (i[1][1:])) for i in data]
 
@@ -68,6 +71,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -77,4 +81,5 @@ class source:
             if self.out_link not in url:
                 return url
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagResolve)
             return

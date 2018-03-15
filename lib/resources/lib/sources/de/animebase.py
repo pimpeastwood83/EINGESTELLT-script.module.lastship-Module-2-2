@@ -27,6 +27,7 @@ from resources.lib.modules import client
 from resources.lib.modules import tvmaze
 from resources.lib.modules import source_utils
 from resources.lib.modules import dom_parser
+from resources.lib.modules import source_faultlog
 
 
 class source:
@@ -93,6 +94,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -109,6 +111,7 @@ class source:
 
             return url
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagResolve)
             return
 
     def __search(self, title):
@@ -122,4 +125,5 @@ class source:
 
             return source_utils.strip_domain(r)
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagSearch)
             return
