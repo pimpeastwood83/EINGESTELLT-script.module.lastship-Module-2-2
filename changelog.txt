@@ -1,5 +1,8 @@
+[B]1.0.6.6~nightly3[/B]
+- Update tata
+
 [B]1.0.6.6~nightly2[/B]
-- add Funktion Fehlerhafte Provider erkennen
+- add Funktion Fehlerhafte Provider erkennen und Update alle source_de
 
 [B]1.0.6.6~nightly1[/B]
 - Update movie2k-sh 
