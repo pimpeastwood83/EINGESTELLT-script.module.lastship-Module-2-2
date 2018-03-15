@@ -195,7 +195,9 @@ class source:
             pattern = '<meta name="csrf-token" content="([^"]+)">'
             string = str(sHtmlContent)
             token = re.compile(pattern, flags=re.I | re.M).findall(string)
-            print "print hdstreams.org shtml entry token", token[0]
+            #print "print hdstreams.org shtml entry token", token[0]
+            if len(token) == 0:
+                return #No Entry found?
             # first iteration of session object to be parsed for search
             #sHtmlContent=self.scraper.get(self.search % imdb).content
             #sHtmlContent=self.scraper.get(self.search % imdb).content

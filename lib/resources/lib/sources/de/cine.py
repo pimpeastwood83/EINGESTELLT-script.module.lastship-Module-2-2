@@ -56,6 +56,8 @@ class source:
 
             data = client.request(urlparse.urljoin(self.base_link, self.request_link), post=data, XHR=True)
             data = json.loads(data)
+            if data['status'] == False:
+                return sources
             data = [(i, data['links'][i]) for i in data['links'] if 'links' in data]
             data = [(i[0], i[1][0], (i[1][1:])) for i in data]
 

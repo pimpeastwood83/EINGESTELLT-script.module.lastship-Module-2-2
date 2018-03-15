@@ -125,6 +125,7 @@ class source:
             r = sorted(r, key=lambda i: int(i[2]), reverse=True)  # with year > no year
             r = [i[0] for i in r if cleantitle.get(i[1]) in t]
 
+            url = None
             if len(r) > 1:
                 for i in r:
                     data = client.request(urlparse.urljoin(self.base_link, i))
@@ -134,7 +135,7 @@ class source:
 
                     if len(data) >= 1:
                         url = i
-            else:
+            elif len(r) > 0:
                 url = r[0]
 
             if url:

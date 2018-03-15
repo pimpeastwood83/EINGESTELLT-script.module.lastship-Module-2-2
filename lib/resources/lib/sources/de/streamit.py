@@ -133,7 +133,11 @@ class source:
             r = dom_parser.parse_dom(r, 'a', req='href')
             r = [(i.attrs['href'], i.content, re.findall('\((\d{4})', i.content)) for i in r]
             r = [(i[0], i[1], i[2][0] if i[2] else '0') for i in r]
-            r = [i[0] for i in r if cleantitle.get(i[1]) in t and i[2] in y][0]
+            r = [i[0] for i in r if cleantitle.get(i[1]) in t and i[2] in y]
+            if len(r) > 0:
+                r = r[0]
+            else:
+                return
 
             return source_utils.strip_domain(r)
         except:

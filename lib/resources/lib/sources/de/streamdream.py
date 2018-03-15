@@ -110,6 +110,7 @@ class source:
             r = dom_parser.parse_dom(r, 'a', req='href')
             r = [i.attrs['href'] for i in r if i]
 
+            url = None
             if len(r) > 1:
                 for i in r:
                     data = client.request(urlparse.urljoin(self.base_link, i))
@@ -117,7 +118,7 @@ class source:
 
                     if len(data) >= 1:
                         url = i
-            else:
+            elif len(r) > 0:
                 url = r[0]
 
             if url:
