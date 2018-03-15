@@ -1,5 +1,6 @@
 [B]1.0.6.6~nightly3[/B]
 - Update tata
+- Update cleantitle
 
 [B]1.0.6.6~nightly2[/B]
 - add Funktion Fehlerhafte Provider erkennen und Update alle source_de
