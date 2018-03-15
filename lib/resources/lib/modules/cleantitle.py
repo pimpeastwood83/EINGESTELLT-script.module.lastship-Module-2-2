@@ -1,8 +1,8 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 """
     Lastship Add-on (C) 2017
-    Credits to Placenta and Covenant; our thanks go to their creators
+    Credits to Exodus and Covenant; our thanks go to their creators
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,10 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-# Addon Name: lastship
-# Addon id: plugin.video.lastship
-# Addon Provider: LastShip
-
 import re
 import unicodedata
 
@@ -32,10 +28,10 @@ def get(title):
         title = title.encode('utf-8')
     except:
         pass
-    title = re.sub('&#(\d);', '', title)
+    title = re.sub('&#(\d+);', '', title)
     title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
     title = title.replace('&quot;', '\"').replace('&amp;', '&')
-    title = re.sub('\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|"|,|\'|\_|\.|\?)|\s', '', title).lower()
+    title = re.sub('\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|–|"|,|\'|\_|\.|\?)|\s', '', title).lower()
     return title
 
 
@@ -67,6 +63,7 @@ def getsearch(title):
     title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
     title = title.replace('&quot;', '\"').replace('&amp;', '&')
     title = re.sub('\\\|/|-|–|:|;|\*|\?|"|\'|<|>|\|', '', title).lower()
+    title = re.sub(' +',' ',title)
     return title
 
 
@@ -77,7 +74,6 @@ def query(title):
 
 
 def normalize(title):
-
     try:
         try: return title.decode('ascii').encode("utf-8")
         except: pass
