@@ -23,6 +23,8 @@ class source:
         self.search=self.base_link + 'index.php?do=search&subaction=search&search_start=1&full_search=0&result_from=1&story=%s'
         self.scraper=cfscrape.create_scraper()
 
+        self.hdgo_quality = ["SD", "HD", "1080p", "2K", "4K"]
+
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
             url = self.__search(localtitle,aliases ,year)
@@ -84,10 +86,6 @@ class source:
             for container in link_containers:
                 #3 different types found till now: hdgo.show, namba.show and direct (mail.ru etc.)
                 # i.e. http://kinoger.com/stream/1911-bloodrayne-2-deliverance-2007.html
-                if "HD" in container.content:
-                    quality = "HD"
-                else:
-                    quality = "SD"
 
                 if ".show" in container.content:
                     pattern = ',\[\[(.*?)\]\]'
@@ -110,9 +108,17 @@ class source:
                     if source_link:
                         source_link = source_link.strip("'")
                         if "hdgo" in container.content:
-                            sources.append({'source': 'hdgo.cc', 'quality': quality, 'language': 'de',
-                                            'url': source_link, 'direct': False,
-                                            'debridonly': False, 'checkquality': True})
+                            hdgostreams = self.getHDGOStreams(source_link)
+                            if hdgostreams is not None:
+                                if len(hdgostreams) > 1:
+                                    hdgostreams.pop(0)
+                                for i, stream in enumerate(hdgostreams):
+                                    sources.append({'source': 'hdgo.cc', 'quality': self.hdgo_quality[i], 'language': 'de',
+                                                    'url': stream + '|Referer=' + source_link, 'direct': True,
+                                                    'debridonly': False})
+                                    quality = self.hdgo_quality[i]
+                            else:
+                                continue
                         elif "namba" in container.content:
                             sources.append({'source': 'kinoger.com', 'quality': quality, 'language': 'de', 'url': "http://v1.kinoger.pw/vod/"+source_link, 'direct': False,
                                     'debridonly': False, 'checkquality': True})
@@ -122,9 +128,17 @@ class source:
                     if len(frame) == 0:
                         continue
                     if 'hdgo' in frame[0].attrs["src"]:
-                        sources.append({'source': 'hdgo.cc', 'quality': quality, 'language': 'de',
-                                        'url': frame[0].attrs["src"], 'direct': False,
-                                        'debridonly': False, 'checkquality': True})
+                        hdgostreams = self.getHDGOStreams(frame[0].attrs["src"])
+                        if hdgostreams is not None:
+                            if len(hdgostreams) > 1:
+                                hdgostreams.pop(0)
+                            for i, stream in enumerate(hdgostreams):
+                                sources.append({'source': 'hdgo.cc', 'quality': self.hdgo_quality[i], 'language': 'de',
+                                                'url': stream + '|Referer=' + frame[0].attrs["src"], 'direct': True,
+                                                'debridonly': False})
+                                quality = self.hdgo_quality[i]
+                        else:
+                            continue
                     else:
                         valid, host = source_utils.is_host_valid(frame[0].attrs["src"], hostDict)
                         if not valid: continue
@@ -143,24 +157,7 @@ class source:
 
     def resolve(self, url):
         try:
-            if 'hdgo' in url:
-                request = client.request(url, referer=url)
-
-                # print "print hdgoclient request)",request
-                pattern = '<iframe[^>]src="//([^"]+)'
-                request = re.compile(pattern, re.DOTALL).findall(request)
-                # print "print hdgoclient link referer request, r[0]",request, request[0]
-
-                # print "print hdgoclient referer"
-                request = client.request('http://' + request[0], referer=url)
-
-                # print "print hdgoclient request 2",request
-                pattern = "url:[^>]'([^']+)"
-                request = re.compile(pattern, re.DOTALL).findall(request)
-                # print "print hdgoclient final link ",request
-
-                return request[len(request)-1]+ '|Referer=' + url
-            elif 'kinoger' in url:
+            if 'kinoger' in url:
                 request = self.scraper.get(url).content
                 pattern = 'src:  "(.*?)"'
                 request = re.compile(pattern, re.DOTALL).findall(request)
@@ -210,3 +207,15 @@ class source:
             return
         except:
             return
+
+    def getHDGOStreams(self,url):
+        try:
+            request = client.request(url, referer=url)
+            pattern = '<iframe[^>]src="//([^"]+)'
+            request = re.compile(pattern, re.DOTALL).findall(request)
+            request = client.request('http://' + request[0], referer=url)
+            pattern = "url:[^>]'([^']+)"
+            request = re.compile(pattern, re.DOTALL).findall(request)
+            return request
+        except:
+            return None
