@@ -10,6 +10,9 @@ import hashlib
 from resources.lib.modules import client
 from resources.lib.modules import pyaes
 from resources.lib.modules import cfscrape
+from resources.lib.modules import dom_parser
+from resources.lib.modules import source_utils
+from resources.lib.modules import cleantitle
 
 class source:
     def __init__(self):
@@ -17,32 +20,26 @@ class source:
         self.language = ['de']
         self.domains = ['kinoger.com']
         self.base_link = 'http://kinoger.com/'
-        self.movie_link= self.base_link + 'movies?perPage=54'
-        self.movie_link= self.base_link + 'seasons?perPage=54'
         self.search=self.base_link + 'index.php?do=search&subaction=search&search_start=1&full_search=0&result_from=1&story=%s'
         self.scraper=cfscrape.create_scraper()
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            print "print movie entry to search", imdb,title,localtitle,aliases,year
-            url = self.__search(localtitle,year)
-            print "print movie return url", url
+            url = self.__search(localtitle,aliases ,year)
 
-            # Hack für die Suche, needs testing
-            if not url:
-                for aliases in aliases:
-                    print "print aliases", aliases['title']
-                    if aliases['country']=='de':
-                        url = self.__search(aliases['title'],year)
-            return url
+            if not url and title != localtitle:
+                url = self.__search(title, aliases, year)
+            return urllib.urlencode({'url': url, 'imdb': re.sub('[^0-9]', '', imdb)}) if url else None
             
         except:
             return
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
         try:
-            
-            return 
+            url = self.__search(tvshowtitle, aliases, year)
+            if not url and tvshowtitle != localtvshowtitle:
+                url = self.__search(localtvshowtitle, aliases, year)
+            return urllib.urlencode({'url': url, 'imdb': re.sub('[^0-9]', '', imdb)}) if url else None
         except:
             return
 
@@ -50,8 +47,13 @@ class source:
         try:
             if not url:
                 return
-
-            return 
+            
+            data = urlparse.parse_qs(url)
+            data = dict([(i, data[i][0]) if data[i] else (i, '') for i in data])
+            if not data["url"]:
+                return
+            data.update({'season': season, 'episode': episode})
+            return urllib.urlencode(data)
         except:
             return
 
@@ -60,58 +62,79 @@ class source:
         try:
             if not url:
                 return sources
-            
+
+
+            data = urlparse.parse_qs(url)
+            data = dict([(i, data[i][0]) if data[i] else (i, '') for i in data])
+            url = urlparse.urljoin(self.base_link, data.get('url', ''))
+            season = data.get('season')
+            episode = data.get('episode')
+
             sHtmlContent=self.scraper.get(url).content
-            #print "print kinoger film sources content", sHtmlContent          
-            pattern = '''(hdgo.show[^>].*?|<iframe[^>]src=")(http[^"']+)'''
-            link = re.compile(pattern, re.DOTALL).findall(sHtmlContent)
-            #print "print source aResult pattern", type(aResult),aResult
 
-            
-            
-         
-            for dummy,link in link:
-                print "print link in aResult", link
-                
-                
-                if 'mail' in link:
-                    sources.append({'source': 'MyMail.ru', 'quality': 'HD', 'language': 'de', 'url': link, 'direct': False, 'debridonly': False})
-                elif 'ok.ru' in link:
-                    sources.append({'source': 'OK.ru', 'quality': 'HD', 'language': 'de', 'url': link, 'direct': True, 'debridonly': False})
-                elif 'rapidvideo' in link:
-                    sources.append({'source': 'rapidvideo.com', 'quality': 'HD', 'language': 'de', 'url': link, 'direct': False, 'debridonly': False})
-                elif 'getvi' in link:
-                    sources.append({'source': 'getvi', 'quality': 'HD', 'language': 'de', 'url': link, 'direct': False, 'debridonly': False})
-                elif 'streamcloud' in link:
-                    sources.append({'source': 'streamcloud.com', 'quality': 'SD', 'language': 'de', 'url': link, 'direct': False, 'debridonly': False})
-                elif 'hdgo' in link:
-                    print "print hdgo in link", link
-                    
-                    request=client.request(link,referer=link)
+            quality = "SD"
 
-                    #print "print hdgoclient request)",request
-                    pattern = '<iframe[^>]src="//([^"]+)'                    
-                    request = re.compile(pattern, re.DOTALL).findall(request)
-                    #print "print hdgoclient link referer request, r[0]",request, request[0]
-                    
-                    #print "print hdgoclient referer"
-                    request=client.request('http://' + request[0],referer=link)
-                    
-                    #print "print hdgoclient request 2",request
-                    pattern = "url:[^>]'([^']+)"
-                    request = re.compile(pattern, re.DOTALL).findall(request)
-                    #print "print hdgoclient final link ",request
+            # do we have multiple hoster?
+            # i.e. http://kinoger.com/stream/1911-bloodrayne-2-deliverance-2007.html
+            link_containers = dom_parser.parse_dom(sHtmlContent,"section")
+            if len(link_containers) == 0: #only one, i.e. http://kinoger.com/stream/890-lucy-2014.html
+                #only one
+                link_containers = dom_parser.parse_dom(sHtmlContent,"div",attrs={"id":"container-video"})
 
-                    for i,stream in enumerate(request):
-                        
-                        if i==2:
-                            sources.append({'source': 'hdgo.cc', 'quality': 'HD', 'language': 'de', 'url': stream + '|Referer=' + link, 'direct': True, 'debridonly': False})
-                        elif i==3:
-                            sources.append({'source': 'hdgo.cc', 'quality': '1080p', 'language': 'de', 'url': stream + '|Referer=' + link, 'direct': True, 'debridonly': False})
-                        else:
-                            sources.append({'source': 'hdgo.cc', 'quality': 'SD', 'language': 'de', 'url': stream + '|Referer=' + link, 'direct': True, 'debridonly': False})
+            for container in link_containers:
+                #3 different types found till now: hdgo.show, namba.show and direct (mail.ru etc.)
+                # i.e. http://kinoger.com/stream/1911-bloodrayne-2-deliverance-2007.html
+                if "HD" in container.content:
+                    quality = "HD"
                 else:
-                    sources.append({'source': 'CDN', 'quality': 'HD', 'language': 'de', 'url': link, 'direct': True, 'debridonly': False})
+                    quality = "SD"
+
+                if ".show" in container.content:
+                    pattern = ',\[\[(.*?)\]\]'
+                    links = re.compile(pattern, re.DOTALL).findall(container.content)
+                    if len(links) == 0: continue;
+                    #split them up to get season and episode
+                    season_array = links[0].split("],[")
+
+                    source_link = None
+                    if season and episode:
+                        if len(season_array) < int(season):
+                            continue
+                        episode_array = season_array[int(season)-1].split(",")
+                        if len(episode_array) < int(episode):
+                            continue
+                        source_link = episode_array[int(episode)-1]
+                    elif len(season_array) == 1:
+                        source_link = season_array[0]
+
+                    if source_link:
+                        source_link = source_link.strip("'")
+                        if "hdgo" in container.content:
+                            sources.append({'source': 'hdgo.cc', 'quality': quality, 'language': 'de',
+                                            'url': source_link, 'direct': False,
+                                            'debridonly': False, 'checkquality': True})
+                        elif "namba" in container.content:
+                            sources.append({'source': 'kinoger.com', 'quality': quality, 'language': 'de', 'url': "http://v1.kinoger.pw/vod/"+source_link, 'direct': False,
+                                    'debridonly': False, 'checkquality': True})
+
+                elif "iframe" in container.content:
+                    frame = dom_parser.parse_dom(container.content, "iframe")
+                    if len(frame) == 0:
+                        continue
+                    if 'hdgo' in frame[0].attrs["src"]:
+                        sources.append({'source': 'hdgo.cc', 'quality': quality, 'language': 'de',
+                                        'url': frame[0].attrs["src"], 'direct': False,
+                                        'debridonly': False, 'checkquality': True})
+                    else:
+                        valid, host = source_utils.is_host_valid(frame[0].attrs["src"], hostDict)
+                        if not valid: continue
+
+                        sources.append({'source': host, 'quality': quality, 'language': 'de', 'url': frame[0].attrs["src"], 'direct': False,
+                                        'debridonly': False, 'checkquality': True})
+
+                else:
+                    #warning?
+                    continue
                     
             return sources
         except:
@@ -119,37 +142,71 @@ class source:
 
 
     def resolve(self, url):
-        return url
+        try:
+            if 'hdgo' in url:
+                request = client.request(url, referer=url)
 
-    def __search(self, localtitle,year):
+                # print "print hdgoclient request)",request
+                pattern = '<iframe[^>]src="//([^"]+)'
+                request = re.compile(pattern, re.DOTALL).findall(request)
+                # print "print hdgoclient link referer request, r[0]",request, request[0]
+
+                # print "print hdgoclient referer"
+                request = client.request('http://' + request[0], referer=url)
+
+                # print "print hdgoclient request 2",request
+                pattern = "url:[^>]'([^']+)"
+                request = re.compile(pattern, re.DOTALL).findall(request)
+                # print "print hdgoclient final link ",request
+
+                return request[len(request)-1]+ '|Referer=' + url
+            elif 'kinoger' in url:
+                request = self.scraper.get(url).content
+                pattern = 'src:  "(.*?)"'
+                request = re.compile(pattern, re.DOTALL).findall(request)
+                return request[0]+ '|Referer=' + url
+            return url
+        except:
+            return url
+
+    def __search(self, localtitle, aliases ,year):
         try:
 
+            aliases = [b["title"] for b in aliases]
+            aliases = [localtitle] + aliases
             #KinoGer Suche
-            #http://kinoger.com/index.php?do=search&subaction=search&search_start=1&full_search=0&result_from=1&story=bright
-            #print "print local title", localtitle
-            # first iteration of session object to be parsed for search
-            url="http://kinoger.com/index.php?do=search&subaction=search&search_start=1&full_search=0&result_from=1&titleonly=3&sortby=title&resorder=asc&story="+ str(localtitle)+" "+str(year)
-            print "print search url", url
-            #self.search anstelle url
+            url=self.search % str(localtitle)
 
-                       
-            
             sHtmlContent=self.scraper.get(url).content
-            #print "print Kinoger Content", sHtmlContent
-            # suche nach <span class="buttons"><a href="http://kinoger.com/stream/5378-paddington-2-2017.html"><span><b>Play</b></span></a></span>
-            
-            pattern = '<span class="buttons"><a href="([^"]+).*?'
-            aResult = re.compile(pattern, re.DOTALL).findall(sHtmlContent)
-            #print "print search a Result", type(aResult),aResult
-            url=re.sub(r'<span class="buttons"><a href="','',aResult[1])
-            
+            search_results = dom_parser.parse_dom(sHtmlContent,'div', attrs={'id':'dle-content'})
+            if len(search_results) == 0:
+                raise Exception()
 
-#NEED FIX!! teste ob titel in Resutl, da suchergebnisauch an 2te stel sein kann !!
-            
-            print "print search return url",url
-            #<img src="/templates/kinoger/images/ico/postinfo-icon.png" alt="" class="img" /> <a href="http://kinoger.com/stream/5375-bright-2017.html">Bright (2017) Film</a>
-            #url = "http://kinoger.com/stream/5011-dunkirk-2017.html" #"http://kinoger.com/stream/5375-bright-2017.html"      http://kinoger.com/stream/5266-happy-death-day-2017.html                     
+            #split content by seperator
+            contentGroup = search_results[0].content.split("separator2")
+            for c in contentGroup:
+
+                #Fiter out English streams. I.e.: Downsizing
+                category_content = dom_parser.parse_dom(c,'li', attrs={'class':'category'})
+                if len(category_content) > 0 and "Englisch" in category_content[0].content:
+                    continue
+
+                r = dom_parser.parse_dom(c,'div', attrs={'class':'titlecontrol'})
+                if len(r) == 0:
+                    raise Exception()
+                titlecontainer = r[0]
+                k = dom_parser.parse_dom(titlecontainer,'a')
+                for link in k:
+                    linkTitle = cleantitle.get(link.content)
+                    #clean it from
+                    staffIndex = linkTitle.find('staffel')
+                    if staffIndex > -1 :
+                        linkTitle = linkTitle[:staffIndex]
+                    linkTitle = linkTitle.replace("film","")
+                    for alias in aliases:
+                        if linkTitle in cleantitle.get(alias):
+                            return link.attrs["href"]
                 
-            return url
+            return
         except:
             return
