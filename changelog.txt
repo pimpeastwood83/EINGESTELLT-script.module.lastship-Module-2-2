@@ -1,3 +1,6 @@
+[B]1.0.6.6~nightly5[/B]
+- Add kinoger
+
 [B]1.0.6.6~nightly4[/B]
 - Update source_fault_log.py
 
