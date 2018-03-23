@@ -30,7 +30,7 @@ import xbmc
 from xbmc import translatePath
 from resources.lib.modules import control
 from resources.lib.modules import log_utils
-from resources.lib.modules import downloader
+import xbmcgui
 
 ## script.module.lastship
 REMOTE_MODULE_COMMITS = "https://api.github.com/repos/lastship/script.module.lastship/commits/nightly"
@@ -54,9 +54,9 @@ def scriptmoduleLastship():
     commitXML = _getXmlString(REMOTE_MODULE_COMMITS)
     if commitXML:
         commitUpdate(commitXML, LOCAL_MODULE_VERSION, REMOTE_MODULE_DOWNLOADS, path, "Updating " + name, LOCAL_FILE_NAME_MODULE)
+        xbmcgui.Dialog().info(name+ "-Update Erfolgreich.")
     else:
-        from resources.lib.gui.gui import cGui
-        cGui().showError('LastShip', 'Fehler beim ' + name+ "-Update.", 5)
+        xbmcgui.Dialog().ok('LastShip', 'Fehler beim ' + name+ "-Update.")
 
 def pluginVideoLastship():
     name = 'plugin.video.lastship'
@@ -64,9 +64,9 @@ def pluginVideoLastship():
     commitXML = _getXmlString(REMOTE_PLUGIN_COMMITS)
     if commitXML:
         commitUpdate(commitXML, LOCAL_PLUGIN_VERSION, REMOTE_PLUGIN_DOWNLOADS, path, "Updating " + name, LOCAL_FILE_NAME_PLUGIN)
+        xbmcgui.Dialog().info(name+ "-Update Erfolgreich.")
     else:
-        from resources.lib.gui.gui import cGui
-        cGui().showError('LastShip', 'Fehler beim ' + name+ "-Update.", 5)
+        xbmcgui.Dialog().ok('LastShip', 'Fehler beim ' + name+ "-Update.")
 
 def commitUpdate(onlineFile, offlineFile, downloadLink, LocalDir, Title, localFileName):
     try:
@@ -75,10 +75,20 @@ def commitUpdate(onlineFile, offlineFile, downloadLink, LocalDir, Title, localFi
             update(LocalDir, downloadLink, Title, localFileName)
             open(offlineFile, 'w').write(jsData['sha'])
     except Exception as e:
+        os.remove(offlineFile)
         log_utils.log("RateLimit reached")
 
 def update(LocalDir, REMOTE_PATH, Title, localFileName):
-    downloader.doDownload(REMOTE_PATH, localFileName, Title, urllib.quote_plus('tools.png'), urllib.quote_plus(json.dumps(dict(''))))
+
+    try:
+        from urllib2 import urlopen
+        f = urlopen(REMOTE_PATH)
+
+        # Open our local file for writing
+        with open(localFileName, "wb") as local_file:
+            local_file.write(f.read())
+    except:
+        log_utils.log("DevUpdate not possible due download error")
 
     updateFile = zipfile.ZipFile(localFileName)
 
@@ -97,6 +107,7 @@ def update(LocalDir, REMOTE_PATH, Title, localFileName):
             f.write(data)
             f.close()
     updateFile.close()
+    os.remove(localFileName)
     xbmc.executebuiltin("XBMC.UpdateLocalAddons()")
 
 def removeFilesNotInRepo(updateFile, LocalDir):
@@ -127,5 +138,6 @@ def updateLastShip():
     try:
         scriptmoduleLastship()
         pluginVideoLastship()
+        log_utils.log("DevUpdate Complete")
     except Exception as e:
         log_utils.log(e)
