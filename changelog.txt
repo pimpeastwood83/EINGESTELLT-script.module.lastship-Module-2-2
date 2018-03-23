@@ -1,5 +1,6 @@
 [B]1.0.6.6~nightly6[/B]
 - add tmovie and update tmovie
+- Update serienstream auf neue Domain
 
 [B]1.0.6.6~nightly5[/B]
 - Add kinoger
