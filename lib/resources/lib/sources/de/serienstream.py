@@ -35,8 +35,8 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['de']
-        self.domains = ['serienstream.to']
-        self.base_link = 'https://serienstream.to'
+        self.domains = ['s.to']
+        self.base_link = 'https://s.to'
         self.search_link = '/ajax/search'
         self.login = control.setting('serienstream.user')
         self.password = control.setting('serienstream.pass')
