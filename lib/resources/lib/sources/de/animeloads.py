@@ -131,7 +131,9 @@ class source:
 
     def resolve(self, url):
         try: return al()._resolve(url)
-        except: return
+        except:
+            source_faultlog.logFault(__name__,source_faultlog.tagResolve)
+            return
 
     def __search(self, titles, year):
         try:

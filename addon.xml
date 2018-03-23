@@ -2,6 +2,7 @@
 <addon id="script.module.lastship" name="Lastship Module" version="1.0.6.6~nightly5" provider-name="LastShip">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
+		<import addon="script.module.web-pdb" />
 	</requires>
 	<extension point="xbmc.python.module" library="lib" />
 	<extension point="xbmc.addon.metadata">

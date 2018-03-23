@@ -22,6 +22,7 @@ import re
 from resources.lib.modules import source_utils
 from resources.lib.modules import cfscrape
 from resources.lib.modules import dom_parser
+from resources.lib.modules import source_faultlog
 
 class source:
     def __init__(self):
@@ -37,12 +38,17 @@ class source:
             sHtmlContent = self.scraper.get(self.search % localtitle).content
 
             a = dom_parser.parse_dom(sHtmlContent, 'ul', attrs={'class': 'rig'})
+            if len(a) == 0:
+                raise Exception() #should always be there
             movie = dom_parser.parse_dom(a, 'li')
+            if len(movie) == 0:
+                return #nothing found
             url = self.base_link + dom_parser.parse_dom(movie[0], 'a')[0].attrs['href']
 
             return url
 
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagSearch)
             return
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
@@ -50,11 +56,16 @@ class source:
             sHtmlContent = self.scraper.get(self.search % localtvshowtitle).content
 
             a = dom_parser.parse_dom(sHtmlContent, 'ul', attrs={'class': 'rig'})
+            if len(a) == 0:
+                raise Exception() #should always be there
             movies = dom_parser.parse_dom(a, 'li')
+            if len(movies) == 0:
+                return #nothing found
             nameUrlTuples = [(dom_parser.parse_dom(i, 'span', attrs={'class': 'name'})[0].content, self.base_link + dom_parser.parse_dom(i, 'a')[0].attrs['href']) for i in movies]
 
             return nameUrlTuples
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagSearch)
             return
 
     def episode(self, url, imdb, tvdb, title, premiered, season, episode):
@@ -65,6 +76,7 @@ class source:
 
             return (episode, url)
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagSearch)
             return
 
     def sources(self, url, hostDict, hostprDict):
@@ -97,6 +109,7 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
 
     def __getLink(self, url):
