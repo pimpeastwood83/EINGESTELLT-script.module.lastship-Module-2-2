@@ -36,20 +36,31 @@ class source:
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
             sHtmlContent = self.scraper.get(self.search % localtitle).content
+            url = self.__getMovie(sHtmlContent)
 
-            a = dom_parser.parse_dom(sHtmlContent, 'ul', attrs={'class': 'rig'})
-            if len(a) == 0:
-                raise Exception() #should always be there
-            movie = dom_parser.parse_dom(a, 'li')
-            if len(movie) == 0:
-                return #nothing found
-            url = self.base_link + dom_parser.parse_dom(movie[0], 'a')[0].attrs['href']
+            if url is 0:
+                for i in aliases:
+                    url = self.__getMovie(self.scraper.get(self.search % i["title"]).content)
+                    if not url is 0:
+                        break
+                if url is 0:
+                    url = None
 
             return url
 
         except:
-            source_faultlog.logFault(__name__,source_faultlog.tagSearch)
+            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return
+
+    def __getMovie(self, sHtmlContent):
+        a = dom_parser.parse_dom(sHtmlContent, 'ul', attrs={'class': 'rig'})
+        if len(a) == 0:
+            raise Exception()  # should always be there
+        movie = dom_parser.parse_dom(a, 'li')
+        if len(movie) == 0:
+            return 0  # nothing found
+        return self.base_link + dom_parser.parse_dom(movie[0], 'a')[0].attrs['href']
+
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
         try:
