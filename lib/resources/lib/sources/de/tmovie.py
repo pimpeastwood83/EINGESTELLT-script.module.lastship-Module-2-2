@@ -73,7 +73,7 @@ class source:
             if not url:
                 return sources
 
-            link = url if isinstance(url, str) else url[1]
+            link = url if isinstance(url, unicode) else url[1]
 
             sHtmlContent = self.scraper.get(link).content
 
