@@ -84,12 +84,12 @@ class source:
                 quality = dom_parser.parse_dom(sHtmlContent, 'div', attrs={'style': 'font-size:10px;'})
                 quality = [i.content for i in dom_parser.parse_dom(quality[1], 'span') if not re.search('quality', i.content, re.IGNORECASE)][0]
 
-                tuple = [[(str(x.attrs['data-seq']), quality) for x in i if url[0] in x.content][0] for i in r]
+                records = [[(str(x.attrs['data-seq']), quality) for x in i if url[0] in x.content][0] for i in r]
             else:
                 r = [dom_parser.parse_dom(i, 'button')[0] for i in a]
-                tuple = [(i.attrs['data-seq'], i.content) for i in r]
+                records = [(i.attrs['data-seq'], i.content) for i in r]
 
-            for record in tuple:
+            for record in records:
                 temp = self.__getLink(link + '/' + record[0])
                 valid, host = source_utils.is_host_valid(temp, hostDict)
                 if not valid: continue
