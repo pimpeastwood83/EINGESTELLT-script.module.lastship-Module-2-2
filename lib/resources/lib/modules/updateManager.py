@@ -54,7 +54,7 @@ def scriptmoduleLastship():
     commitXML = _getXmlString(REMOTE_MODULE_COMMITS)
     if commitXML:
         commitUpdate(commitXML, LOCAL_MODULE_VERSION, REMOTE_MODULE_DOWNLOADS, path, "Updating " + name, LOCAL_FILE_NAME_MODULE)
-        xbmcgui.Dialog().info(name+ "-Update Erfolgreich.")
+        xbmcgui.Dialog().ok('LastShip', name+ "-Update Erfolgreich.")
     else:
         xbmcgui.Dialog().ok('LastShip', 'Fehler beim ' + name+ "-Update.")
 
@@ -64,7 +64,7 @@ def pluginVideoLastship():
     commitXML = _getXmlString(REMOTE_PLUGIN_COMMITS)
     if commitXML:
         commitUpdate(commitXML, LOCAL_PLUGIN_VERSION, REMOTE_PLUGIN_DOWNLOADS, path, "Updating " + name, LOCAL_FILE_NAME_PLUGIN)
-        xbmcgui.Dialog().info(name+ "-Update Erfolgreich.")
+        xbmcgui.Dialog().ok('LastShip', name+ "-Update Erfolgreich.")
     else:
         xbmcgui.Dialog().ok('LastShip', 'Fehler beim ' + name+ "-Update.")
 
