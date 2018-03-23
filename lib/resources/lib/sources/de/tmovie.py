@@ -34,8 +34,6 @@ class source:
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            import pydevd
-            pydevd.settrace('localhost', port=12345, stdoutToServer=True, stderrToServer=True)
             sHtmlContent = self.scraper.get(self.search % localtitle).content
 
             a = dom_parser.parse_dom(sHtmlContent, 'ul', attrs={'class': 'rig'})
