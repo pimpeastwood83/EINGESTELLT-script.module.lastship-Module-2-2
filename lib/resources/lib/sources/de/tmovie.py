@@ -23,6 +23,7 @@ from resources.lib.modules import source_utils
 from resources.lib.modules import cfscrape
 from resources.lib.modules import dom_parser
 from resources.lib.modules import source_faultlog
+from resources.lib.modules import cleantitle
 
 class source:
     def __init__(self):
@@ -35,32 +36,51 @@ class source:
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            sHtmlContent = self.scraper.get(self.search % localtitle).content
-            url = self.__getMovie(sHtmlContent)
 
-            if url is 0:
-                for i in aliases:
-                    url = self.__getMovie(self.scraper.get(self.search % i["title"]).content)
-                    if not url is 0:
-                        break
-                if url is 0:
-                    url = None
+            t = [cleantitle.get(i) for i in set(source_utils.aliases_to_array(aliases)) if i]
+            t.append(cleantitle.get(title))
+            t.append(cleantitle.get(localtitle))
 
-            return url
+            sHtmlContent = self.scraper.get(self.search % title).content
+            foundMovies = self.__getMovie(sHtmlContent)
 
+            if len(foundMovies) is 0 and title is not localtitle:
+
+                sHtmlContent = self.scraper.get(self.search % localtitle).content
+                foundMovies = self.__getMovie(sHtmlContent)
+                if len(foundMovies) == 0:
+                    return ""
+
+            for i in foundMovies:
+                movie_contents = dom_parser.parse_dom(i, 'span', attrs={'class': 'name'})
+                if len(movie_contents) == 0:
+                    continue
+
+                links = dom_parser.parse_dom(i, 'a')
+                if len(links) == 0:
+                    continue
+
+                link = links[0].attrs['href']
+                title = movie_contents[0].content
+                title = cleantitle.get(title)
+
+                if any(title in substring for substring in t):
+                    return self.base_link + link
+                else:
+                    continue
+            return ""
         except:
             source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return
 
-    def __getMovie(self, sHtmlContent):
-        a = dom_parser.parse_dom(sHtmlContent, 'ul', attrs={'class': 'rig'})
+    def __getMovie(self, content):
+        a = dom_parser.parse_dom(content, 'ul', attrs={'class': 'rig'})
         if len(a) == 0:
             raise Exception()  # should always be there
         movie = dom_parser.parse_dom(a, 'li')
         if len(movie) == 0:
-            return 0  # nothing found
-        return self.base_link + dom_parser.parse_dom(movie[0], 'a')[0].attrs['href']
-
+            return []  # nothing found
+        return movie
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
         try:
