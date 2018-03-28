@@ -1,24 +1,16 @@
-[B]1.0.6.6~nightly6[/B]
+[B]1.0.6.6[/B]
+  28.03.2018
 - add tmovie and update tmovie
 - Update serienstream auf neue Domain
-
-[B]1.0.6.6~nightly5[/B]
 - Add kinoger
-
-[B]1.0.6.6~nightly4[/B]
 - Update source_fault_log.py
-
-[B]1.0.6.6~nightly3[/B]
 - Update tata
 - Update cleantitle
-
-[B]1.0.6.6~nightly2[/B]
 - add Funktion Fehlerhafte Provider erkennen und Update alle source_de
-
-[B]1.0.6.6~nightly1[/B]
 - Update movie2k-sh 
 
 [B]1.0.6.5[/B]
+  13.03.2018
 - add szene-streamz
 - Update Manger hinzugefügt (navigator.py)
 - Update movie2k-ac auf movie2k-sh
@@ -28,6 +20,7 @@
 - Fix Personen Suche,Fehlermeldung anzeigen wenn keine Eintrag verfügbar
 
 [B]1.0.6.4[/B]
+  06.03.2018
 - New Fix Foxx
 
 [B]1.0.6.3[/B]
