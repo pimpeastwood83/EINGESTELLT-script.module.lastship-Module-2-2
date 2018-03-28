@@ -258,16 +258,11 @@ class channels:
                 url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
                 sysurl = urllib.quote_plus(url)
 
+                cm = [(queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon),
+                      (refreshMenu, 'RunPlugin(%s?action=refresh)' % sysaddon),
+                      (playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta))]
 
-                cm = []
-
-                cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-
-                cm.append((refreshMenu, 'RunPlugin(%s?action=refresh)' % sysaddon))
-
-                cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
-
-                if isOld == True:
+                if isOld:
                     cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
 
 

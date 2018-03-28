@@ -27,7 +27,6 @@ import re
 import sys
 import urllib
 import string
-import json
 
 class JSUnfuck(object):
     numbers = None

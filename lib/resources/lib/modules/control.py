@@ -325,6 +325,5 @@ def busy():
 def idle():
     return execute('Dialog.Close(busydialog)')
 
-
 def queueItem():
     return execute('Action(Queue)')

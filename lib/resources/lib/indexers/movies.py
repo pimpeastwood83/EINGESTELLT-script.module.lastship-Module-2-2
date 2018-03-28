@@ -25,7 +25,6 @@
 
 from resources.lib.modules import trakt
 from resources.lib.modules import cleangenre
-from resources.lib.modules import cleantitle
 from resources.lib.modules import control
 from resources.lib.modules import cache
 from resources.lib.modules import metacache
@@ -450,7 +449,7 @@ class movies:
                 if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
                 imdb = item['ids']['imdb']
-		log_utils.log('MovieShit - trakt_list - imdb: ' + str(imdb))
+                log_utils.log('MovieShit - trakt_list - imdb: ' + str(imdb))
                 if imdb == None or imdb == '': raise Exception()
                 imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
 
@@ -977,12 +976,7 @@ class movies:
                 url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
                 sysurl = urllib.quote_plus(url)
 
-                path = '%s?action=play&title=%s&year=%s&imdb=%s' % (sysaddon, systitle, year, imdb)
-
-
-                cm = []
-
-                cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
+                cm = [(queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon)]
 
                 try:
                     overlay = int(playcount.getMovieOverlay(indicators, imdb))

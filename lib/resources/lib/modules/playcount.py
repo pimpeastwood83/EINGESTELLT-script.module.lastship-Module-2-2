@@ -22,8 +22,6 @@
 # Addon id: plugin.video.lastship
 # Addon Provider: LastShip
 
-import json
-
 from resources.lib.modules import control
 from resources.lib.modules import trakt
 

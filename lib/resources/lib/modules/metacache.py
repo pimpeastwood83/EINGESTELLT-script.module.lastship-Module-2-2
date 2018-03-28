@@ -22,7 +22,7 @@
 # Addon id: plugin.video.lastship
 # Addon Provider: LastShip
 
-import time,hashlib
+import time
 
 try: from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database

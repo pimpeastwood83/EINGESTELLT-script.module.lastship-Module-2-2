@@ -22,7 +22,7 @@
 # Addon id: plugin.video.lastship
 # Addon Provider: LastShip
 
-import os, base64, sys, urllib2, urlparse
+import os, base64, sys, urllib2
 import xbmc, xbmcaddon, xbmcgui
 from resources.lib.modules import control
 from resources.lib.modules import trakt
@@ -227,7 +227,7 @@ class navigator:
 
         elif traktCredentials == True:
             self.addDirectoryItem("Angefangene/nicht beendete Episoden", 'calendar&url=onDeck', 'trakt.png', 'DefaultTVShows.png')
-	    self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png',
+            self.addDirectoryItem(32032, 'tvshows&url=traktcollection', 'trakt.png', 'DefaultTVShows.png',
                                   context=(32551, 'tvshowsToLibrary&url=traktcollection'))
             self.addDirectoryItem(32033, 'tvshows&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png',
                                   context=(32551, 'tvshowsToLibrary&url=traktwatchlist'))
