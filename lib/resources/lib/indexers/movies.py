@@ -27,7 +27,6 @@ from resources.lib.modules import trakt
 from resources.lib.modules import cleangenre
 from resources.lib.modules import cleantitle
 from resources.lib.modules import control
-from resources.lib.modules import client
 from resources.lib.modules import cache
 from resources.lib.modules import metacache
 from resources.lib.modules import playcount
@@ -412,6 +411,7 @@ class movies:
 
 
     def trakt_list(self, url, user):
+        from resources.lib.modules import client
         try:
             q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
             q.update({'extended': 'full'})
@@ -503,6 +503,7 @@ class movies:
 
 
     def trakt_user_list(self, url, user):
+        from resources.lib.modules import client
         try:
             items = trakt.getTraktAsJson(url)
         except:
@@ -528,6 +529,7 @@ class movies:
 
 
     def imdb_list(self, url):
+        from resources.lib.modules import client
         try:
             for i in re.findall('date\[(\d+)\]', url):
                 url = url.replace('date[%s]' % i, (self.datetime - datetime.timedelta(days = int(i))).strftime('%Y-%m-%d'))
@@ -664,6 +666,7 @@ class movies:
 
 
     def imdb_person_list(self, url):
+        from resources.lib.modules import client
         try:
             result = client.request(url)
             items = client.parseDOM(result, 'div', attrs = {'class': '.+? mode-detail'})
@@ -696,6 +699,7 @@ class movies:
 
 
     def imdb_user_list(self, url):
+        from resources.lib.modules import client
         try:
             result = client.request(url)
             items = client.parseDOM(result, 'li', attrs = {'class': 'ipl-zebra-list__item user-list'})
@@ -752,6 +756,7 @@ class movies:
 
 
     def super_info(self, i):
+        from resources.lib.modules import client
         try:
             if self.list[i]['metacache'] == True: raise Exception()
 
