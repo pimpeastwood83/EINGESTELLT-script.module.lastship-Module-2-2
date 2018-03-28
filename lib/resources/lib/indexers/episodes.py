@@ -22,19 +22,18 @@
 # Addon id: plugin.video.lastship
 # Addon Provider: LastShip
 
+import StringIO, datetime, json, os, re, sys, urllib, urllib2, urlparse, zipfile
 
-from resources.lib.modules import trakt
-from resources.lib.modules import cleantitle
-from resources.lib.modules import cleangenre
-from resources.lib.modules import control
-from resources.lib.modules import client
 from resources.lib.modules import cache
+from resources.lib.modules import cleangenre
+from resources.lib.modules import cleantitle
+from resources.lib.modules import client
+from resources.lib.modules import control
 from resources.lib.modules import playcount
-from resources.lib.modules import workers
-from resources.lib.modules import views
+from resources.lib.modules import trakt
 from resources.lib.modules import utils
-
-import os,sys,re,json,zipfile,StringIO,urllib,urllib2,urlparse,datetime
+from resources.lib.modules import views
+from resources.lib.modules import workers
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 

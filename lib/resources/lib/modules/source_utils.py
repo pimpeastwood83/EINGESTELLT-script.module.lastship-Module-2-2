@@ -31,7 +31,6 @@ import re
 from resources.lib.modules import client
 from resources.lib.modules import directstream
 from resources.lib.modules import trakt
-from resources.lib.modules import pyaes
 
 def is_anime(content, type, type_id):
     try:
@@ -252,14 +251,15 @@ def evp_decode(cipher_text, passphrase, salt=None):
     if not salt:
         salt = cipher_text[8:16]
         cipher_text = cipher_text[16:]
-    data = evpKDF(passphrase, salt)
+    data = __evpKDF(passphrase, salt)
+
+    import pyaes
     decrypter = pyaes.Decrypter(pyaes.AESModeOfOperationCBC(data['key'], data['iv']))
     plain_text = decrypter.feed(cipher_text)
     plain_text += decrypter.feed()
     return plain_text
 
-
-def evpKDF(passwd, salt, key_size=8, iv_size=4, iterations=1, hash_algorithm="md5"):
+def __evpKDF(passwd, salt, key_size=8, iv_size=4, iterations=1, hash_algorithm="md5"):
     target_key_size = key_size + iv_size
     derived_bytes = ""
     number_of_derived_words = 0
@@ -268,21 +268,16 @@ def evpKDF(passwd, salt, key_size=8, iv_size=4, iterations=1, hash_algorithm="md
     while number_of_derived_words < target_key_size:
         if block is not None:
             hasher.update(block)
-
         hasher.update(passwd)
         hasher.update(salt)
         block = hasher.digest()
         hasher = hashlib.new(hash_algorithm)
-
         for _i in range(1, iterations):
             hasher.update(block)
             block = hasher.digest()
             hasher = hashlib.new(hash_algorithm)
-
         derived_bytes += block[0: min(len(block), (target_key_size - number_of_derived_words) * 4)]
-
         number_of_derived_words += len(block) / 4
-
     return {
         "key": derived_bytes[0: key_size * 4],
         "iv": derived_bytes[key_size * 4:]

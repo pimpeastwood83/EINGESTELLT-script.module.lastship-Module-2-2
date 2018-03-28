@@ -19,22 +19,11 @@
 """
 
 import json
-import urllib
-import urlparse
 import re
 import base64
-import hashlib
 
-
-from resources.lib.modules import pyaes
-#from resources.lib.modules import cache
-#from resources.lib.modules import cleantitle
-#from resources.lib.modules import client
-#from resources.lib.modules import source_utils
-#from resources.lib.modules import dom_parser
 from resources.lib.modules import cfscrape
 from resources.lib.modules import source_faultlog
-
 
 
 class source:
@@ -50,10 +39,8 @@ class source:
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            print "print movie entry to search", title, imdb
             url = self.__search(imdb)
-            print "print movie return url", url
-            
+
             return url
             
         except:
@@ -93,15 +80,14 @@ class source:
             
             # 1080p finden
             if '1080p' in string:
-                print "Qualität 1080p"
-                q='1080p'
+                q = '1080p'
       
             for e, h, sLang, sName in aResult:
                 link=self.__getlinks(e,h,sLang,sName,token,url)
                 
                 # hardcoded, da Qualität auf der Webseite inkorrekt beschrieben ist unnd sName.strip() problem liefert aufgrund webseite. nxload kanndamit unterdrückt werden
                 
-                if q=='1080p' and e=='1':
+                if q == '1080p' and e == '1':
                     if 'openload' in link:
                         sources.append({'source': 'openload.com', 'quality': '1080p', 'language': 'de', 'url': link, 'direct': False, 'debridonly': False})
                     elif 'streamango' in link:
@@ -126,8 +112,7 @@ class source:
             return sources
 
     def __getlinks(self,e, h, sLang, sName,token,url):
-            #print "print def get links self,e, h, sLang, sName,token, url", self,e, h, sLang, sName, token, url
-            url=url+'/stream'
+            url = url + '/stream'
             # hardcoded german language
             params={'e':e,'h':h,'lang':'de', 'q':'','grecaptcha':''}
             sHtmlContent=self.scraper.post(url,headers={'X-CSRF-TOKEN':token[0],'X-Requested-With':'XMLHttpRequest'},data=params).content
@@ -140,50 +125,14 @@ class source:
            
             for ct, iv, s, e in aResult:                
                 ct = re.sub(r"\\", "", ct[::-1])
-                s = re.sub(r"\\", "", s)         
-                
-                
-            sUrl2 = self.__evp_decode(ct, token, s.decode('hex'))            
+                s = re.sub(r"\\", "", s)
+
+            from resources.lib.modules import source_utils
+
+            sUrl2 = source_utils.evp_decode(ct, token, s.decode('hex'))
             fUrl=sUrl2.replace('\/', '/').replace('"', '')       
                 
             return fUrl
-                   
-    def __evp_decode(self,cipher_text, passphrase, salt=None):
-        cipher_text = base64.b64decode(cipher_text)
-        if not salt:
-            salt = cipher_text[8:16]
-            cipher_text = cipher_text[16:]
-        data = self.__evpKDF(passphrase, salt)
-        decrypter = pyaes.Decrypter(pyaes.AESModeOfOperationCBC(data['key'], data['iv']))
-        plain_text = decrypter.feed(cipher_text)
-        plain_text += decrypter.feed()
-        return plain_text
-
-    
-    def __evpKDF(self,passwd, salt, key_size=8, iv_size=4, iterations=1, hash_algorithm="md5"):
-        target_key_size = key_size + iv_size
-        derived_bytes = ""
-        number_of_derived_words = 0
-        block = None
-        hasher = hashlib.new(hash_algorithm)
-        while number_of_derived_words < target_key_size:
-            if block is not None:
-                hasher.update(block)
-            hasher.update(passwd)
-            hasher.update(salt)
-            block = hasher.digest()
-            hasher = hashlib.new(hash_algorithm)
-            for _i in range(1, iterations):
-                hasher.update(block)
-                block = hasher.digest()
-                hasher = hashlib.new(hash_algorithm)
-            derived_bytes += block[0: min(len(block), (target_key_size - number_of_derived_words) * 4)]
-            number_of_derived_words += len(block) / 4
-        return {
-            "key": derived_bytes[0: key_size * 4],
-            "iv": derived_bytes[key_size * 4:]
-        }
-
 
     def resolve(self, url):
         return url
@@ -191,19 +140,17 @@ class source:
     def __search(self, imdb):
         try:
             sHtmlContent=self.scraper.get(self.base_link).content
-            print "print hdstreams.org shtml entry", sHtmlContent
+
             pattern = '<meta name="csrf-token" content="([^"]+)">'
             string = str(sHtmlContent)
             token = re.compile(pattern, flags=re.I | re.M).findall(string)
-            #print "print hdstreams.org shtml entry token", token[0]
+
             if len(token) == 0:
                 return #No Entry found?
             # first iteration of session object to be parsed for search
-            #sHtmlContent=self.scraper.get(self.search % imdb).content
-            #sHtmlContent=self.scraper.get(self.search % imdb).content
+
             sHtmlContent=self.scraper.get(self.search % imdb,headers={'X-CSRF-TOKEN':token[0],'X-Requested-With':'XMLHttpRequest'}).text
                
-            print "print hdstreams.org shtml", sHtmlContent
             pattern = '"title":"([^"]+).*?"url":"([^"]+).*?src":"([^"]+)'
             aResult = re.compile(pattern, re.DOTALL).findall(sHtmlContent)
             
