@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.module.lastship" name="Lastship Module" version="1.0.6.6~nightly6" provider-name="LastShip">
+<addon id="script.module.lastship" name="Lastship Module" version="1.0.6.6" provider-name="LastShip">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>
@@ -9,13 +9,13 @@
 		<summary lang="en">lastship</summary>
 		<description>Viel Spaß mit LastShip</description>
 		<news lang="de">- Update serienstream auf neue Domain
-- add tmovie and update tmovie
+- add tmovie und update tmovie
 - add kinoger
 - Update source_faultlog
 - Update tata
 - Update cleantitle.py
 - add Funktion Fehlerhafte Provider erkennen und Update alle source_de
--Update movie2k-sh 
+- Update movie2k-sh 
 </news>
 	</extension>
 </addon>
