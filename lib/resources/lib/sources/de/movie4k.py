@@ -28,15 +28,17 @@ from resources.lib.modules import client
 from resources.lib.modules import source_utils
 from resources.lib.modules import dom_parser
 from resources.lib.modules import source_faultlog
+from resources.lib.modules import cfscrape
 
 
 class source:
     def __init__(self):
         self.priority = 1
         self.language = ['de']
-        self.domains = ['movie4k.tv', 'movie4k.to', 'movie.to', 'movie4k.me', 'movie4k.org', 'movie4k.pe', 'movie4k.am']
+        self.domains = ['movie4k.io', 'movie4k.tv', 'movie.to', 'movie4k.me', 'movie4k.org', 'movie4k.pe', 'movie2k.cm', 'movie2k.nu', 'movie4k.am']
         self._base_link = None
         self.search_link = '/movies.php?list=search&search=%s'
+        self.scraper = cfscrape.create_scraper()
 
     @property
     def base_link(self):
@@ -60,7 +62,7 @@ class source:
 
             url = urlparse.urljoin(self.base_link, url)
 
-            r = client.request(url)
+            r = self.scraper.get(url).content
             r = r.replace('\\"', '"')
 
             links = dom_parser.parse_dom(r, 'tr', attrs={'id': 'tablemoviesindex2'})
@@ -113,7 +115,7 @@ class source:
             t = [cleantitle.get(i) for i in set(titles) if i]
             y = ['%s' % str(year), '%s' % str(int(year) + 1), '%s' % str(int(year) - 1), '0']
 
-            r = client.request(q)
+            r = self.scraper.get(q).content
 
             r = dom_parser.parse_dom(r, 'tr', attrs={'id': re.compile('coverPreview.+?')})
             r = [(dom_parser.parse_dom(i, 'a', req='href'), dom_parser.parse_dom(i, 'div', attrs={'style': re.compile('.+?')}), dom_parser.parse_dom(i, 'img', req='src')) for i in r]
@@ -141,7 +143,7 @@ class source:
             for i in match2[:5]:
                 try:
                     if match: url = match[0]; break
-                    r = client.request(urlparse.urljoin(self.base_link, i))
+                    r = self.scraper.get((urlparse.urljoin(self.base_link, i))).content
                     r = re.findall('(tt\d+)', r)
                     if imdb in r: url = i; break
                 except:
@@ -157,7 +159,7 @@ class source:
             for domain in self.domains:
                 try:
                     url = 'http://%s' % domain
-                    r = client.request(url, limit=1, timeout='10')
+                    r = self.scraper.get(url).content
                     r = dom_parser.parse_dom(r, 'meta', attrs={'name': 'author'}, req='content')
                     if r and 'movie4k.to' in r[0].attrs.get('content').lower():
                         return url
