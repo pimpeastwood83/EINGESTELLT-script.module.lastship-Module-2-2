@@ -62,7 +62,9 @@ class source:
 
             url = urlparse.urljoin(self.base_link, url)
 
-            r = self.scraper.get(url).content
+            r = client.request(url)
+            if r is None:
+                r = self.scraper.get(url).content
             r = r.replace('\\"', '"')
 
             links = dom_parser.parse_dom(r, 'tr', attrs={'id': 'tablemoviesindex2'})
@@ -115,7 +117,9 @@ class source:
             t = [cleantitle.get(i) for i in set(titles) if i]
             y = ['%s' % str(year), '%s' % str(int(year) + 1), '%s' % str(int(year) - 1), '0']
 
-            r = self.scraper.get(q).content
+            r = client.request(q)
+            if r is None:
+                r = self.scraper.get(q).content
 
             r = dom_parser.parse_dom(r, 'tr', attrs={'id': re.compile('coverPreview.+?')})
             r = [(dom_parser.parse_dom(i, 'a', req='href'), dom_parser.parse_dom(i, 'div', attrs={'style': re.compile('.+?')}), dom_parser.parse_dom(i, 'img', req='src')) for i in r]
@@ -143,7 +147,10 @@ class source:
             for i in match2[:5]:
                 try:
                     if match: url = match[0]; break
-                    r = self.scraper.get((urlparse.urljoin(self.base_link, i))).content
+                    q = urlparse.urljoin(self.base_link, i)
+                    r = client.request(q)
+                    if r is None:
+                        r = self.scraper.get(q).content
                     r = re.findall('(tt\d+)', r)
                     if imdb in r: url = i; break
                 except:
@@ -159,9 +166,11 @@ class source:
             for domain in self.domains:
                 try:
                     url = 'http://%s' % domain
-                    r = self.scraper.get(url).content
+                    r = client.request(url)
+                    if r is None:
+                        r = self.scraper.get(url).content
                     r = dom_parser.parse_dom(r, 'meta', attrs={'name': 'author'}, req='content')
-                    if r and 'movie4k.to' in r[0].attrs.get('content').lower():
+                    if r and 'movie4k.io' in r[0].attrs.get('content').lower():
                         return url
                 except:
                     pass
