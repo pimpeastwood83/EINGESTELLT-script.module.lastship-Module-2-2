@@ -55,8 +55,6 @@ class source:
         try:
             if not url:
                 return
-            import pydevd
-            pydevd.settrace('localhost', port=12345, stdoutToServer=True, stderrToServer=True)
 
             url = urlparse.urljoin(self.base_link, url)
 
