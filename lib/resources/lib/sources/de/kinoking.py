@@ -40,16 +40,14 @@ class source:
 
     def movie(self, imdb, title, localtitle, aliases, year):        
         try:
-            url = self.__search([localtitle] + source_utils.aliases_to_array(aliases))
-            if not url and title != localtitle: url = self.__search([title] + source_utils.aliases_to_array(aliases))
+            url = self.__search([localtitle, title] + source_utils.aliases_to_array(aliases))
             return url
         except:
             return
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
         try:
-            url = self.__search([localtvshowtitle] + source_utils.aliases_to_array(aliases))
-            if not url and tvshowtitle != localtvshowtitle: url = self.__search([tvshowtitle] + source_utils.aliases_to_array(aliases))
+            url = self.__search([localtvshowtitle, tvshowtitle] + source_utils.aliases_to_array(aliases))
             return url
         except:
             return
@@ -61,9 +59,8 @@ class source:
 
             s = '-%sx%s/' % (season, episode)
 
-            url = url.rstrip('/')
+            url = url.rstrip('/').replace('tvshows', 'episodes')
             url = url + s
-            url = urlparse.urljoin(self.base_link, url)
 
             return url
         except:
@@ -71,7 +68,6 @@ class source:
 
     def sources(self, url, hostDict, hostprDict):        
         sources = []
-
         try:
             if not url:
                 return sources
@@ -80,32 +76,15 @@ class source:
 
             r = client.request(query)
 
-            r = dom_parser.parse_dom(r, 'div', attrs={'id': 'downloads'})
-            r = dom_parser.parse_dom(r, 'table')
-            r = dom_parser.parse_dom(r, 'tbody')
-            r = dom_parser.parse_dom(r, 'tr')
+            links = dom_parser.parse_dom(r, 'tbody')[0].content
+            links = re.findall('domain=(.*?)".*?href=?"(.*?)".*?<td>(.*?)<.*?<td>(.*?)<', links)
 
-            for i in r:
-
-                if re.search('German', i[1]):
-
-                    hoster = re.search('(?<=domain=)(.*?)(?=\")', i[1])
-                    hoster = hoster.group().lower()
-
-                    valid, hoster = source_utils.is_host_valid(hoster, hostDict)
+            for i in links:
+                if 'German' in i[3]:
+                    valid, hoster = source_utils.is_host_valid(i[0], hostDict)
                     if not valid: continue
 
-                    link = re.search('(?<=links/)(.*?)(?=/)', i[1])
-                    link = link.group()
-
-                    if re.search('<td>HD</td>', i[1]):
-                        quality = 'HD'
-                    else:
-                        quality = 'SD'
-
-                    url = self.__get_link(link)
-
-                    sources.append({'source': hoster, 'quality': quality, 'language': 'de', 'url': url, 'direct': False, 'debridonly': False})
+                    sources.append({'source': hoster, 'quality': i[2], 'language': 'de', 'url': i[1], 'direct': False, 'debridonly': False})
 
             return sources
         except:
@@ -113,9 +92,16 @@ class source:
             return sources
 
     def resolve(self, url):
-        return url
+        try:
+            if not url:
+                return
 
-    def __search(self, titles):        
+            r = client.request(url)
+            return dom_parser.parse_dom(r, 'a', req='href')[0].attrs['href']
+        except:
+            return
+
+    def __search(self, titles):
         try:
             query = self.search_link % (urllib.quote_plus(cleantitle.query(titles[0])))
             query = urlparse.urljoin(self.base_link, query)
@@ -138,22 +124,4 @@ class source:
             return
         except:
             source_faultlog.logFault(__name__, source_faultlog.tagSearch)
-            return
-
-    def __get_link(self, link):
-        try:
-            if not link:
-                return
-
-            query = self.get_link % link
-            query = urlparse.urljoin(self.base_link, query)
-
-            r = client.request(query)
-
-            r = dom_parser.parse_dom(r, 'div', attrs={'class': 'boton'})
-            r = dom_parser.parse_dom(r, 'a', req='href')
-            r = r[0].attrs['href']
-
-            return r
-        except:
             return
