@@ -65,7 +65,8 @@ def logFault(provider, tag):
             dbcur.execute("INSERT INTO %s VALUES (null,?,?,?)" % faultTable, (provider, tagDisabled, now))
             dbcon.commit()
             from resources.lib.modules import client
-            client.request(base64.b64decode(statisticURL) % (provider,now+hoursTillRecheck*60*60))
+            temp = '%s-%s' % (provider, tag)
+            client.request(base64.b64decode(statisticURL) % (temp, now+hoursTillRecheck*60*60))
         dbcur.close()
         del dbcur
         dbcon.close()
