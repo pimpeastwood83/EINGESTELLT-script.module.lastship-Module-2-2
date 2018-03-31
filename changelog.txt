@@ -1,9 +1,10 @@
-[B]1.0.6.7~nightly1[/B]
+[B]1.0.6.7~nightly2[/B]
 - Fix kinow
 - Fix Foxx
 - Update Kinoger
 - Update view4u
 - Update movie4k (Add Serien und Suche optimiert)
+- Merged from Performance Branch
 
 [B]1.0.6.6[/B]
   28.03.2018
