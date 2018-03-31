@@ -22,19 +22,18 @@
 # Addon id: plugin.video.lastship
 # Addon Provider: LastShip
 
+import StringIO, datetime, json, os, re, sys, urllib, urllib2, urlparse, zipfile
 
-from resources.lib.modules import trakt
-from resources.lib.modules import cleantitle
-from resources.lib.modules import cleangenre
-from resources.lib.modules import control
-from resources.lib.modules import client
 from resources.lib.modules import cache
+from resources.lib.modules import cleangenre
+from resources.lib.modules import cleantitle
+from resources.lib.modules import client
+from resources.lib.modules import control
 from resources.lib.modules import playcount
-from resources.lib.modules import workers
-from resources.lib.modules import views
+from resources.lib.modules import trakt
 from resources.lib.modules import utils
-
-import os,sys,re,json,zipfile,StringIO,urllib,urllib2,urlparse,datetime
+from resources.lib.modules import views
+from resources.lib.modules import workers
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
@@ -191,8 +190,6 @@ class seasons:
             seasons = [i for i in episodes if '<EpisodeNumber>1</EpisodeNumber>' in i]
 
             locals = [i for i in result2 if '<EpisodeNumber>' in i]
-
-            result = '' ; result2 = ''
 
             if limit == '':
                 episodes = []
@@ -481,9 +478,7 @@ class seasons:
                 except:
                     pass
 
-
                 url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s' % (sysaddon, systitle, year, imdb, tvdb, season)
-
 
                 cm = []
                 
@@ -1103,7 +1098,6 @@ class episodes:
 
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result = zip.read('%s.xml' % lang)
-                artwork = zip.read('banners.xml')
                 zip.close()
 
                 result = result.split('<Episode>')
@@ -1254,7 +1248,6 @@ class episodes:
                 self.list.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb})
             except:
                 pass
-
 
         items = items[:100]
 
@@ -1487,11 +1480,8 @@ class episodes:
                 url = '%s?action=play&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&premiered=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered, sysmeta, self.systime)
                 sysurl = urllib.quote_plus(url)
 
-                path = '%s?action=play&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&premiered=%s' % (sysaddon, systitle, year, imdb, tvdb, season, episode, systvshowtitle, syspremiered)
-
                 if isFolder == True:
                     url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s' % (sysaddon, systvshowtitle, year, imdb, tvdb, season, episode)
-
 
                 cm = []
 

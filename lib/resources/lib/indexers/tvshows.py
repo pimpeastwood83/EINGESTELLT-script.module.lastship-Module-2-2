@@ -158,19 +158,19 @@ class tvshows:
         navigator.navigator().addDirectoryItem(32603, 'tvSearchnew', 'search.png', 'DefaultTVShows.png')
         try: from sqlite3 import dbapi2 as database
         except: from pysqlite2 import dbapi2 as database
-        
+
         dbcon = database.connect(control.searchFile)
         dbcur = dbcon.cursor()
-             
+
         try:
             dbcur.executescript("CREATE TABLE IF NOT EXISTS tvshow (ID Integer PRIMARY KEY AUTOINCREMENT, term);")
         except:
             pass
-            
+
         dbcur.execute("SELECT * FROM tvshow ORDER BY ID DESC")
-        
+
         lst = []
-        
+
         delete_option = False
         for (id,term) in dbcur.fetchall():
             if term not in str(lst):
@@ -178,12 +178,12 @@ class tvshows:
                 navigator.navigator().addDirectoryItem(term, 'tvSearchterm&name=%s' % term, 'search.png', 'DefaultTVShows.png')
                 lst += [(term)]
         dbcur.close()
-        
+
         if delete_option:
             navigator.navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
 
         navigator.navigator().endDirectory()
-        
+
     def search_new(self):
             control.idle()
 
@@ -192,10 +192,10 @@ class tvshows:
             q = k.getText() if k.isConfirmed() else None
 
             if (q == None or q == ''): return
-            
+
             try: from sqlite3 import dbapi2 as database
             except: from pysqlite2 import dbapi2 as database
-            
+
             dbcon = database.connect(control.searchFile)
             dbcur = dbcon.cursor()
             dbcur.execute("INSERT INTO tvshow VALUES (?,?)", (None,q.decode('utf-8')))
@@ -710,7 +710,7 @@ class tvshows:
                 name = name.encode('utf-8')
 
                 url = client.parseDOM(item, 'a', ret='href')[0]
-                url = url = url.split('/list/', 1)[-1].strip('/')
+                url = url.split('/list/', 1)[-1].strip('/')
                 url = self.imdblist_link % url
                 url = client.replaceHTMLCodes(url)
                 url = url.encode('utf-8')
@@ -765,7 +765,7 @@ class tvshows:
                 tvdb = tvdb.encode('utf-8')
 
                 if tvdb == None or tvdb == '': raise Exception()
- 
+
                 try: poster = item['image']['original']
                 except: poster = '0'
                 if poster == None or poster == '': poster = '0'
@@ -1113,7 +1113,6 @@ class tvshows:
             try:
                 label = i['title']
                 systitle = sysname = urllib.quote_plus(i['originaltitle'])
-                sysimage = urllib.quote_plus(i['poster'])
                 imdb, tvdb, year = i['imdb'], i['tvdb'], i['year']
 
                 meta = dict((k,v) for k, v in i.iteritems() if not v == '0')
@@ -1140,7 +1139,6 @@ class tvshows:
                     url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)
                 else:
                     url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s' % (sysaddon, systitle, year, imdb, tvdb)
-
 
                 cm = []
 
@@ -1275,5 +1273,3 @@ class tvshows:
 
         control.content(syshandle, 'addons')
         control.directory(syshandle, cacheToDisc=True)
-
-

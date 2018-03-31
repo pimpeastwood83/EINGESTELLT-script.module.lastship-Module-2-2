@@ -32,7 +32,6 @@
 """
 
 import re
-import string
 
 def detect(source):
     """Detects whether `source` is P.A.C.K.E.R. coded."""

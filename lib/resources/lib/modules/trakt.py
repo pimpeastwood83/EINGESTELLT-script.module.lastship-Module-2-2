@@ -31,7 +31,6 @@ import urlparse
 
 from resources.lib.modules import cache
 from resources.lib.modules import cleandate
-from resources.lib.modules import client
 from resources.lib.modules import control
 from resources.lib.modules import log_utils
 from resources.lib.modules import utils
@@ -42,6 +41,7 @@ CLIENT_SECRET = '0a361de39a8e9038da91971c23b69fa2860d6f14d8a2f4d57522889c05a1e5f
 REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
 
 def __getTrakt(url, post=None):
+    from resources.lib.modules import client
     try:
         url = urlparse.urljoin(BASE_URL, url)
         post = json.dumps(post) if post else None
@@ -99,6 +99,7 @@ def getTraktAsJson(url, post=None):
         pass
 
 def authTrakt():
+    from resources.lib.modules import client
     try:
         if getTraktCredentialsInfo() == True:
             if control.yesnoDialog(control.lang(32511).encode('utf-8'), control.lang(32512).encode('utf-8'), '', 'Trakt'):

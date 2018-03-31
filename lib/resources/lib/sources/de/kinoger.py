@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import json
 import urllib
 import urlparse
 import re
-import base64
-import hashlib
 
 from resources.lib.modules import client
-from resources.lib.modules import pyaes
 from resources.lib.modules import cfscrape
 from resources.lib.modules import dom_parser
 from resources.lib.modules import source_utils

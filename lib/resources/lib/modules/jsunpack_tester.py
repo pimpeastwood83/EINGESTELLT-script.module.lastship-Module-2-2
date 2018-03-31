@@ -25,8 +25,7 @@
 import re
 import sys
 
-from resources.lib.modules import jsunpack
-
+import jsunpack
 
 Juice = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 

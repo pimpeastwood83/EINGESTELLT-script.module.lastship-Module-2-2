@@ -35,7 +35,6 @@ from resources.lib.modules import workers
 from resources.lib.modules import source_utils
 from resources.lib.modules import log_utils
 from resources.lib.modules import source_faultlog
-from resources.lib.modules import thexem
 
 try: from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
@@ -53,7 +52,6 @@ class sources:
 
     def play(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select):
         try:
-        
             url = None
             
             control.moderator()
@@ -126,7 +124,6 @@ class sources:
         elif 'year' in meta:
             sysname += urllib.quote_plus(' (%s)' % meta['year'])
 
-
         poster = meta['poster3'] if 'poster3' in meta else '0'
         if poster == '0': poster = meta['poster'] if 'poster' in meta else '0'
 
@@ -149,7 +146,6 @@ class sources:
         sysimage = urllib.quote_plus(poster.encode('utf-8'))
 
         downloadMenu = control.lang(32403).encode('utf-8')
-
 
         for i in range(len(items)):
             try:
@@ -356,7 +352,6 @@ class sources:
             localtvshowtitle = self.getLocalTitle(tvshowtitle, imdb, tvdb, content)
             aliases = self.getAliasTitles(imdb, localtvshowtitle, content)
             #Disabled on 11/11/17 due to hang. Should be checked in the future and possible enabled again.
-            #season, episode = thexem.get_scene_episode_number(tvdb, season, episode)
             for i in sourceDict: threads.append(workers.Thread(self.getEpisodeSource, title, year, imdb, tvdb, season, episode, tvshowtitle, localtvshowtitle, aliases, premiered, i[0], i[1]))
 
         s = [i[0] + (i[1],) for i in zip(sourceDict, threads)]
@@ -367,11 +362,9 @@ class sources:
 
         [i.start() for i in threads]
 
-        string1 = control.lang(32404).encode('utf-8')
-        string2 = control.lang(32405).encode('utf-8')
         string3 = control.lang(32406).encode('utf-8')
         string4 = control.lang(32601).encode('utf-8')
-        string5 = control.lang(32602).encode('utf-8')
+
         string6 = control.lang(32606).encode('utf-8')
         string7 = control.lang(32607).encode('utf-8')
 
@@ -381,10 +374,9 @@ class sources:
         quality = control.setting('hosts.quality')
         if quality == '': quality = '0'
 
-        line1 = line2 = line3 = ""
-	debrid_only = control.setting('debrid.only')
+        line1 = line2 = ""
 
-	pre_emp =  control.setting('preemptive.termination')
+        pre_emp = control.setting('preemptive.termination')
         pre_emp_limit = control.setting('preemptive.limit')
 
         source_4k = d_source_4k = 0
@@ -401,7 +393,7 @@ class sources:
         pdiag_bg_format = '4K:%s(%s)|1080p:%s(%s)|720p:%s(%s)|SD:%s(%s)|T:%s(%s)'.split('|')
 
         for i in range(0, 4 * timeout):
-	    if str(pre_emp) == 'true':
+            if str(pre_emp) == 'true':
                 if quality in ['1','0']:
                     if (source_1080 + d_source_1080) > int(pre_emp_limit): break
                 elif quality in ['2']:
@@ -410,10 +402,8 @@ class sources:
                     if (source_sd + d_source_sd) > int(pre_emp_limit): break
                 else:
                     if (source_sd + d_source_sd) > int(pre_emp_limit): break
-
             try:
                 if xbmc.abortRequested == True: return sys.exit()
-
                 try:
                     if progressDialog.iscanceled(): break
                 except:
@@ -609,7 +599,6 @@ class sources:
         ''' END '''
         
         try:
-            sources = []
             dbcur.execute("SELECT * FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             match = dbcur.fetchone()
             t1 = int(re.sub('[^0-9]', '', str(match[5])))
@@ -639,7 +628,6 @@ class sources:
             pass
 
         try:
-            sources = []
             sources = call.sources(url, self.hostDict, self.hostprDict)
             if sources == None or sources == []: raise Exception()
             sources = [json.loads(t) for t in set(json.dumps(d, sort_keys=True) for d in sources)]
@@ -660,7 +648,6 @@ class sources:
             pass
 
         try:
-            sources = []
             dbcur.execute("SELECT * FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
             match = dbcur.fetchone()
             t1 = int(re.sub('[^0-9]', '', str(match[5])))
@@ -708,7 +695,6 @@ class sources:
             pass
 
         try:
-            sources = []
             sources = call.sources(ep_url, self.hostDict, self.hostprDict)
             if sources == None or sources == []: raise Exception()
             sources = [json.loads(t) for t in set(json.dumps(d, sort_keys=True) for d in sources)]
@@ -734,15 +720,11 @@ class sources:
         try:
             control.idle()
 
-            yes = control.yesnoDialog(control.lang(32407).encode('utf-8'), '', '')
-            if not yes: return
-
-            cache.cache_clear_providers()
-
-            control.infoDialog(control.lang(32408).encode('utf-8'), sound=True, icon='INFO')
+            if control.yesnoDialog(control.lang(32407).encode('utf-8'), '', ''):
+                cache.cache_clear_providers()
+                control.infoDialog(control.lang(32408).encode('utf-8'), sound=True, icon='INFO')
         except:
             pass
-
 
     def sourcesFilter(self):
         provider = control.setting('hosts.sort.provider')
@@ -841,8 +823,6 @@ class sources:
             if extra_info == 'true': t = source_utils.getFileType(self.sources[i]['url'])
             else: t = None
             
-            u = self.sources[i]['url']
-
             p = self.sources[i]['provider']
 
             q = self.sources[i]['quality']
@@ -898,14 +878,14 @@ class sources:
         try:
             self.url = None
 
-            u = url = item['url']
+            url = item['url']
 
             d = item['debrid'] ; direct = item['direct']
             local = item.get('local', False)
 
             provider = item['provider']
             call = [i[1] for i in self.sourceDict if i[0] == provider][0]
-            u = url = call.resolve(url)
+            url = call.resolve(url)
 
             if url == None or (not '://' in str(url) and not local): raise Exception()
 
@@ -942,7 +922,6 @@ class sources:
             elif url.startswith('http'):
                 result = client.request(url.split('|')[0], headers=headers, output='chunk', timeout='20')
                 if result == None: raise Exception()
-
 
             self.url = url
             return url

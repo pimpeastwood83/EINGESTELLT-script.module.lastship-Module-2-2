@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import json
-import urllib
 import urlparse
 import re
-import base64
-import hashlib
 import requests
+
 from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import dom_parser
