@@ -1,3 +1,6 @@
+[B]1.0.6.7~nightly4[/B]
+- TMDB Suche Update
+
 [B]1.0.6.7~nightly3[/B]
 - QuickFix 4K Quellen finden 
 
