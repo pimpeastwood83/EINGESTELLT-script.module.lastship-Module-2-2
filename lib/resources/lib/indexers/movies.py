@@ -495,8 +495,11 @@ class movies:
         trakt_info = cache.get(trakt.getTraktAsJson, 0, self.trakttmdbmovielookup_link % tmdb)
         trakt_movie = trakt_info[0]["movie"]
 
+        meta = json.loads(meta)
+        meta["imdb"] = trakt_movie["ids"]["imdb"]
+
         url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (
-        sysaddon, urllib.quote_plus(trakt_movie["title"]), trakt_movie["year"], trakt_movie["ids"]["imdb"], urllib.quote_plus(meta), self.systime)
+        sysaddon, urllib.quote_plus(trakt_movie["title"]), trakt_movie["year"], trakt_movie["ids"]["imdb"], urllib.quote_plus(json.dumps(meta)), self.systime)
         control.idle()
         control.execute('RunPlugin(%s)' % url)
 
