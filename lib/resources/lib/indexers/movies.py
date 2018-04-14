@@ -65,7 +65,7 @@ class movies:
         self.filterbyyear = control.setting('filter.movies.byyear')
 
         #self.search_link = 'http://api.trakt.tv/search/movie?limit=20&page=1&query='
-        self.search_link = 'https://api.themoviedb.org/3/search/movie?api_key=%s&language=de-DE&page=1&include_adult=false&query=' % self.tm_user
+        self.search_link = 'http://api.themoviedb.org/3/search/movie?api_key=%s&language=de-DE&page=1&include_adult=false&query=' % self.tm_user
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/movies/%s'
         self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
         self.tm_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&language=en-US&include_image_language=en,%s,null' % ('%s', self.tm_user, self.lang)
@@ -428,6 +428,7 @@ class movies:
         except:
             raise Exception()
 
+	next = ''
         try:
             if int(resp["page"]) < int(resp["total_pages"]):
                 q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
