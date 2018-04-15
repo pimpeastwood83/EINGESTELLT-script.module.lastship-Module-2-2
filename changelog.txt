@@ -1,3 +1,6 @@
+[B]1.0.6.7~nightly5[/B]
+- Fix TMDB Suche Update/Umstellung auf http
+
 [B]1.0.6.7~nightly4[/B]
 - TMDB Suche Update
 
