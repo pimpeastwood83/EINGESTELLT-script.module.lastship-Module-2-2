@@ -97,7 +97,7 @@ class movies:
             self.certification_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&certificates=us:%s&sort=moviemeter,asc&count=40&start=1'
             self.boxoffice_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&sort=boxoffice_gross_us,desc&count=40&start=1'
 
-		# Filter Movies By Year
+        # Filter Movies By Year
         if self.filterbyyear == 'true':
             from_year = control.setting('movies.byyear.from')
             to_year = control.setting('movies.byyear.to')
@@ -428,7 +428,7 @@ class movies:
         except:
             raise Exception()
 
-	next = ''
+        next = ''
         try:
             if int(resp["page"]) < int(resp["total_pages"]):
                 q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
@@ -452,7 +452,6 @@ class movies:
                 tmdb = item['id']
 
                 if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
-                duration = '0'
 
                 try:
                     rating = str(item['vote_average'])
@@ -470,8 +469,6 @@ class movies:
                     pass
                 if votes == None: votes = '0'
 
-                mpaa = '0'
-
                 try:
                     plot = item['overview']
                 except:
@@ -483,7 +480,7 @@ class movies:
 
                 self.list.append(
                     {'title': title, 'originaltitle': orgtitle, 'year': year,
-                     'rating': rating, 'votes': votes, 'plot': plot,
+                     'rating': rating, 'votes': votes, 'plot': plot, 'duration': 0,
                      'imdb': '0', 'tmdb': tmdb, 'tvdb': '0', 'poster': poster, 'next': next})
             except:
                 pass
@@ -824,7 +821,6 @@ class movies:
     def worker(self, level=1):
         self.meta = []
         total = len(self.list)
-        total = 0
 
         self.fanart_tv_headers = {'api-key': 'NDZkZmMyN2M1MmE0YTc3MjY3NWQ4ZTMyYjdiY2E2OGU='.decode('base64')}
         if not self.fanart_tv_user == '':
@@ -834,16 +830,26 @@ class movies:
 
         self.list = metacache.fetch(self.list, self.lang, self.user)
 
-        for r in range(0, total, 40):
-            threads = []
-            for i in range(r, r+40):
-                if i <= total: threads.append(workers.Thread(self.super_info, i))
-            [i.start() for i in threads]
-            [i.join() for i in threads]
-
+        if control.setting('movies.extrainfo') == '2' or (len(self.list) > 0 and "tmdb" not in self.list[0]): #scrape info if we are not coming from search, i.e. trakt-list
+            for r in range(0, total, 40):
+                threads = []
+                for i in range(r, r+40):
+                    if i <= total: threads.append(workers.Thread(self.super_info, i))
+                [i.start() for i in threads]
+                [i.join() for i in threads]
             if self.meta: metacache.insert(self.meta)
+            self.list = [i for i in self.list if not i['imdb'] == '0']
 
-        #self.list = [i for i in self.list if not i['imdb'] == '0']
+        elif control.setting('movies.extrainfo') == '1':
+            from resources.lib.modules import tmdb
+
+            ids = list(x["tmdb"] for x in self.list)
+            all_meta = tmdb.tmdbMetacatcher().getMetaFromIDs(ids,self.tm_user)
+            for ind,item in enumerate(all_meta):
+                self.list[ind].update(item)
+            if self.meta: metacache.insert(self.meta)
+            self.list = [i for i in self.list if not i['imdb'] == '0']
+
 
         self.list = metacache.local(self.list, self.tm_img_link, 'poster3', 'fanart2')
 
@@ -851,12 +857,18 @@ class movies:
             for i in self.list: i.update({'clearlogo': '0', 'clearart': '0'})
 
 
+
     def super_info(self, i):
         from resources.lib.modules import client
         try:
             if self.list[i]['metacache'] == True: raise Exception()
 
-            imdb = self.list[i]['imdb']
+            if ("imdb" not in self.list[i] or int(self.list[i]["imdb"]) == 0) and "tmdb" in self.list[i]:
+                tmdb = self.list[i]['tmdb']
+                r = trakt.IdLookup("movie", "tmdb", tmdb)
+                imdb = r["imdb"]
+            else:
+                imdb = self.list[i]['imdb']
 
             item = trakt.getMovieSummary(imdb)
 
@@ -882,7 +894,7 @@ class movies:
             genre = ' / '.join(genre).strip()
             if not genre: genre = '0'
 
-            duration = str(item.get('Runtime', 0))
+            duration = str(item.get('runtime', 0))
 
             rating = item.get('rating', '0')
             if not rating or rating == '0.0': rating = '0'
@@ -923,6 +935,7 @@ class movies:
                 pass
 
             try:
+                #Todo: check setting?
                 artmeta = True
                 #if self.fanart_tv_user == '': raise Exception()
                 art = client.request(self.fanart_tv_art_link % imdb, headers=self.fanart_tv_headers, timeout='10', error=True)
@@ -970,6 +983,7 @@ class movies:
                 clearart = '0'
 
             try:
+                #TODO: we already loaded that in search with tmdb, collect info from there
                 if self.tm_user == '': raise Exception()
 
                 art2 = client.request(self.tm_art_link % imdb, timeout='10', error=True)
