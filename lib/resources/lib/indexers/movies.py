@@ -49,7 +49,6 @@ class movies:
         self.list = []
 
         self.imdb_link = 'http://www.imdb.com'
-        self.tmdb_link = 'http://api.themoviedb.org'
         self.trakt_link = 'http://api.trakt.tv'
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
         self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
@@ -64,13 +63,11 @@ class movies:
         self.hidecinema = control.setting('hidecinema')
         self.filterbyyear = control.setting('filter.movies.byyear')
 
-        #self.search_link = 'http://api.trakt.tv/search/movie?limit=20&page=1&query='
-        self.search_link = 'http://api.themoviedb.org/3/search/movie?api_key=%s&language=de-DE&page=1&include_adult=false&query=' % self.tm_user
+        self.search_link = 'http://api.trakt.tv/search/movie?limit=20&page=1&query='
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/movies/%s'
         self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
         self.tm_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&language=en-US&include_image_language=en,%s,null' % ('%s', self.tm_user, self.lang)
         self.tm_img_link = 'https://image.tmdb.org/t/p/w%s%s'
-        self.tm_img_org_link = 'https://image.tmdb.org/t/p/w342/%s'
 
         self.persons_link = 'http://www.imdb.com/search/name?count=100&name='
         self.personlist_link = 'http://www.imdb.com/search/name?count=100&gender=male,female'
@@ -97,7 +94,7 @@ class movies:
             self.certification_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&certificates=us:%s&sort=moviemeter,asc&count=40&start=1'
             self.boxoffice_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&sort=boxoffice_gross_us,desc&count=40&start=1'
 
-        # Filter Movies By Year
+		# Filter Movies By Year
         if self.filterbyyear == 'true':
             from_year = control.setting('movies.byyear.from')
             to_year = control.setting('movies.byyear.to')
@@ -115,7 +112,6 @@ class movies:
         self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies'
         self.traktfeatured_link = 'http://api.trakt.tv/recommendations/movies?limit=40'
         self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=40&page=1'
-        self.trakttmdbmovielookup_link = "http://api.trakt.tv/search/tmdb/%s?type=movie"
         self.imdblists_link = 'http://www.imdb.com/user/ur%s/lists?tab=all&sort=mdfd&order=desc&filter=titles' % self.imdb_user
         self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
         self.imdblist2_link = 'http://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=movie,short,tvMovie,tvSpecial,video&start=1'
@@ -161,10 +157,6 @@ class movies:
 
             elif u in self.imdb_link:
                 self.list = cache.get(self.imdb_list, 24, url)
-                if idx == True: self.worker()
-
-            elif u in self.tmdb_link:
-                self.list = cache.get(self.tmdb_list, 24, url)
                 if idx == True: self.worker()
 
 
@@ -415,91 +407,6 @@ class movies:
         for i in range(0, len(self.list)): self.list[i].update({'image': 'userlists.png', 'action': 'movies'})
         self.addDirectory(self.list, queue=True)
         return self.list
-
-    def tmdb_list(self, url):
-        from resources.lib.modules import client
-
-        try:
-            api_reponse = client.request(url)
-            resp = utils.json_loads_as_str(api_reponse)
-            if not resp["page"]: raise Exception() #api key invalid?
-
-            items = resp['results']
-        except:
-            raise Exception()
-
-        next = ''
-        try:
-            if int(resp["page"]) < int(resp["total_pages"]):
-                q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
-                q.update({'page': str(int(q['page']) + 1)})
-                q = (urllib.urlencode(q)).replace('%2C', ',')
-                next = url.replace('?' + urlparse.urlparse(url).query, '') + '?' + q
-                next = next.encode('utf-8')
-        except:
-            next = ''
-
-        for item in items:
-            try:
-                title = item['title']
-                #title = client.replaceHTMLCodes(title)
-                orgtitle = item['original_title']
-                #orgtitle = client.replaceHTMLCodes(title)
-
-                year = item['release_date']
-                year = year[:4]
-
-                tmdb = item['id']
-
-                if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
-
-                try:
-                    rating = str(item['vote_average'])
-                except:
-                    rating = '0'
-                if rating == None or rating == '0.0': rating = '0'
-
-                try:
-                    votes = str(item['vote_count'])
-                except:
-                    votes = '0'
-                try:
-                    votes = str(format(int(votes), ',d'))
-                except:
-                    pass
-                if votes == None: votes = '0'
-
-                try:
-                    plot = item['overview']
-                except:
-                    plot = '0'
-                if plot == None: plot = '0'
-                plot = client.replaceHTMLCodes(plot)
-
-                poster = self.tm_img_org_link % item['poster_path']
-
-                self.list.append(
-                    {'title': title, 'originaltitle': orgtitle, 'year': year,
-                     'rating': rating, 'votes': votes, 'plot': plot, 'duration': 0,
-                     'imdb': '0', 'tmdb': tmdb, 'tvdb': '0', 'poster': poster, 'next': next})
-            except:
-                pass
-
-        return self.list
-
-    def LoadAndPlay(self,tmdb,meta):
-        control.busy()
-        sysaddon = sys.argv[0]
-        trakt_info = cache.get(trakt.getTraktAsJson, 0, self.trakttmdbmovielookup_link % tmdb)
-        trakt_movie = trakt_info[0]["movie"]
-
-        meta = json.loads(meta)
-        meta["imdb"] = trakt_movie["ids"]["imdb"]
-
-        url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (
-        sysaddon, urllib.quote_plus(trakt_movie["title"]), trakt_movie["year"], trakt_movie["ids"]["imdb"], urllib.quote_plus(json.dumps(meta)), self.systime)
-        control.idle()
-        control.execute('RunPlugin(%s)' % url)
 
 
     def trakt_list(self, url, user):
@@ -830,28 +737,16 @@ class movies:
 
         self.list = metacache.fetch(self.list, self.lang, self.user)
 
-        if control.setting('movies.extrainfo') is not '0':
-            if control.setting('movies.extrainfo') == '2' or (len(self.list) > 0 and "tmdb" not in self.list[0]): #scrape info if we are not coming from search, i.e. trakt-list
-                for r in range(0, total, 40):
-                    threads = []
-                    for i in range(r, r+40):
-                        if i <= total: threads.append(workers.Thread(self.super_info, i))
-                    [i.start() for i in threads]
-                    [i.join() for i in threads]
-                if self.meta: metacache.insert(self.meta)
-                self.list = [i for i in self.list if not i['imdb'] == '0']
+        for r in range(0, total, 40):
+            threads = []
+            for i in range(r, r+40):
+                if i <= total: threads.append(workers.Thread(self.super_info, i))
+            [i.start() for i in threads]
+            [i.join() for i in threads]
 
-            elif control.setting('movies.extrainfo') == '1':
-                from resources.lib.modules import tmdb
+            if self.meta: metacache.insert(self.meta)
 
-                self.list = list(x for x in self.list if int(x["tmdb"]) is not 0)
-                ids = list(int(x["tmdb"]) for x in self.list)
-                all_meta = tmdb.tmdbMetacatcher().getMetaFromIDs(ids,self.tm_user)
-                for ind,item in enumerate(all_meta):
-                    self.list[ind].update(item)
-                if self.meta: metacache.insert(self.meta)
-                self.list = [i for i in self.list if not i['imdb'] == '0']
-
+        self.list = [i for i in self.list if not i['imdb'] == '0']
 
         self.list = metacache.local(self.list, self.tm_img_link, 'poster3', 'fanart2')
 
@@ -859,18 +754,12 @@ class movies:
             for i in self.list: i.update({'clearlogo': '0', 'clearart': '0'})
 
 
-
     def super_info(self, i):
         from resources.lib.modules import client
         try:
             if self.list[i]['metacache'] == True: raise Exception()
 
-            if ("imdb" not in self.list[i] or int(self.list[i]["imdb"]) == 0) and "tmdb" in self.list[i]:
-                tmdb = self.list[i]['tmdb']
-                r = trakt.IdLookup("movie", "tmdb", tmdb)
-                imdb = r["imdb"]
-            else:
-                imdb = self.list[i]['imdb']
+            imdb = self.list[i]['imdb']
 
             item = trakt.getMovieSummary(imdb)
 
@@ -896,7 +785,7 @@ class movies:
             genre = ' / '.join(genre).strip()
             if not genre: genre = '0'
 
-            duration = str(item.get('runtime', 0))
+            duration = str(item.get('Runtime', 0))
 
             rating = item.get('rating', '0')
             if not rating or rating == '0.0': rating = '0'
@@ -937,7 +826,6 @@ class movies:
                 pass
 
             try:
-                #Todo: check setting?
                 artmeta = True
                 #if self.fanart_tv_user == '': raise Exception()
                 art = client.request(self.fanart_tv_art_link % imdb, headers=self.fanart_tv_headers, timeout='10', error=True)
@@ -985,7 +873,6 @@ class movies:
                 clearart = '0'
 
             try:
-                #TODO: we already loaded that in search with tmdb, collect info from there
                 if self.tm_user == '': raise Exception()
 
                 art2 = client.request(self.tm_art_link % imdb, timeout='10', error=True)
@@ -1086,10 +973,7 @@ class movies:
 
                 sysmeta = urllib.quote_plus(json.dumps(meta))
 
-                if imdb == '0':
-                    url = '%s?action=moviePostloadAndPlay&tmdb=%s&meta=%s' % (sysaddon, tmdb, sysmeta)
-                else:
-                    url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
+                url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
                 sysurl = urllib.quote_plus(url)
 
                 cm = [(queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon)]
