@@ -830,25 +830,27 @@ class movies:
 
         self.list = metacache.fetch(self.list, self.lang, self.user)
 
-        if control.setting('movies.extrainfo') == '2' or (len(self.list) > 0 and "tmdb" not in self.list[0]): #scrape info if we are not coming from search, i.e. trakt-list
-            for r in range(0, total, 40):
-                threads = []
-                for i in range(r, r+40):
-                    if i <= total: threads.append(workers.Thread(self.super_info, i))
-                [i.start() for i in threads]
-                [i.join() for i in threads]
-            if self.meta: metacache.insert(self.meta)
-            self.list = [i for i in self.list if not i['imdb'] == '0']
+        if control.setting('movies.extrainfo') is not '0':
+            if control.setting('movies.extrainfo') == '2' or (len(self.list) > 0 and "tmdb" not in self.list[0]): #scrape info if we are not coming from search, i.e. trakt-list
+                for r in range(0, total, 40):
+                    threads = []
+                    for i in range(r, r+40):
+                        if i <= total: threads.append(workers.Thread(self.super_info, i))
+                    [i.start() for i in threads]
+                    [i.join() for i in threads]
+                if self.meta: metacache.insert(self.meta)
+                self.list = [i for i in self.list if not i['imdb'] == '0']
 
-        elif control.setting('movies.extrainfo') == '1':
-            from resources.lib.modules import tmdb
+            elif control.setting('movies.extrainfo') == '1':
+                from resources.lib.modules import tmdb
 
-            ids = list(x["tmdb"] for x in self.list)
-            all_meta = tmdb.tmdbMetacatcher().getMetaFromIDs(ids,self.tm_user)
-            for ind,item in enumerate(all_meta):
-                self.list[ind].update(item)
-            if self.meta: metacache.insert(self.meta)
-            self.list = [i for i in self.list if not i['imdb'] == '0']
+                self.list = list(x for x in self.list if int(x["tmdb"]) is not 0)
+                ids = list(int(x["tmdb"]) for x in self.list)
+                all_meta = tmdb.tmdbMetacatcher().getMetaFromIDs(ids,self.tm_user)
+                for ind,item in enumerate(all_meta):
+                    self.list[ind].update(item)
+                if self.meta: metacache.insert(self.meta)
+                self.list = [i for i in self.list if not i['imdb'] == '0']
 
 
         self.list = metacache.local(self.list, self.tm_img_link, 'poster3', 'fanart2')
