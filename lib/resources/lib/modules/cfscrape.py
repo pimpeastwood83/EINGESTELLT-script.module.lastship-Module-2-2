@@ -45,7 +45,7 @@ class CloudflareScraper(Session):
         return resp
 
     def solve_cf_challenge(self, resp, **original_kwargs):
-        sleep(5)  # Cloudflare requires a delay before solving the challenge
+        sleep(4)  # Cloudflare requires a delay before solving the challenge
 
         body = resp.text
         parsed_url = urlparse(resp.url)
@@ -60,7 +60,6 @@ class CloudflareScraper(Session):
         try:
             params["jschl_vc"] = re.search(r'name="jschl_vc" value="(\w+)"', body).group(1)
             params["pass"] = re.search(r'name="pass" value="(.+?)"', body).group(1)
-
             # Extract the arithmetic operation
             init = re.findall('setTimeout\(function\(\){\s*.*?.*:(.*?)};', body)[-1]
             builder = re.findall(r"challenge-form\'\);\s*(.*)a.v", body)[0]
@@ -70,9 +69,9 @@ class CloudflareScraper(Session):
                 if len(line) > 0 and '=' in line:
                     sections=line.split('=')
                     line_val = self.parseJSString(sections[1])
-                    decryptVal = int(eval(str(decryptVal)+sections[0][-1]+str(line_val)))
+                    decryptVal = float(eval(str(decryptVal)+sections[0][-1]+str(line_val)))
 
-            answer = decryptVal + len(domain)
+            answer = float("{0:.10f}".format(decryptVal)) + len(domain)
 
         except Exception:
             # Something is wrong with the page.
@@ -93,13 +92,19 @@ class CloudflareScraper(Session):
         # performing other types of requests even as the first request.
         method = resp.request.method
         cloudflare_kwargs["allow_redirects"] = False
+        cloudflare_kwargs["cookies"] = resp.cookies
         redirect = self.request(method, submit_url, **cloudflare_kwargs)
+
         return self.request(method, redirect.headers["Location"], **original_kwargs)
 
     def parseJSString(self, s):
         try:
             offset=1 if s[0]=='+' else 0
-            val = int(eval(s.replace('!+[]','1').replace('!![]','1').replace('[]','0').replace('(','str(')[offset:]))
+            equation = s.replace('!+[]','1').replace('!![]','1').replace('[]','0').replace('(','str(')[offset:]
+            if "/" in equation:
+                equation = equation.replace("/",")/float(").replace("/float(+","/float(")
+                equation = "float(" + equation + ")"
+            val = float(eval(equation))
             return val
         except:
             pass
