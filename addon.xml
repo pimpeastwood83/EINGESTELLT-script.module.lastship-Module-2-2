@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.module.lastship" name="Lastship Module" version="1.0.6.7~nightly6" provider-name="LastShip">
+<addon id="script.module.lastship" name="Lastship Module" version="1.0.6.7~nightly7" provider-name="LastShip">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>
@@ -9,9 +9,8 @@
 		<summary lang="en">lastship</summary>
 		<description>Viel Spaß mit LastShip</description>
 		<news lang="de">
-			- TMDB als default Suche aktiviert, Suche via Trakt.tv optional 
-			- Fix TMDB Suche Update/Umstellung auf http
-			- TMDB Suche Update
+			- Downgrade auf Stand Nightly3
+			- cfscraper Update (Zeitverzögerung)
 			- QuickFix 4K Quellen finden 
 			- Fix kinow
 			- Fix Foxx
