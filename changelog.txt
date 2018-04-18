@@ -1,3 +1,7 @@
+[B]1.0.6.7~nightly7[/B]
+- Downgrade auf Stand Nightly3
+- cfscraper Update (Zeitverzögerung)
+
 [B]1.0.6.7~nightly6[/B]
 - TMDB als default Suche aktiviert, Suche via Trakt.tv optional 
 
