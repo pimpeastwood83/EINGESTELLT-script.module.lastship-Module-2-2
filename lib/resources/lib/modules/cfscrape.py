@@ -45,7 +45,7 @@ class CloudflareScraper(Session):
         return resp
 
     def solve_cf_challenge(self, resp, **original_kwargs):
-        sleep(4)  # Cloudflare requires a delay before solving the challenge
+        sleep(5)  # Cloudflare requires a delay before solving the challenge
 
         body = resp.text
         parsed_url = urlparse(resp.url)
