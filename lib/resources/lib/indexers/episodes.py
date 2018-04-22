@@ -1098,6 +1098,7 @@ class episodes:
 
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result = zip.read('%s.xml' % lang)
+                artwork = zip.read('banners.xml')
                 zip.close()
 
                 result = result.split('<Episode>')
