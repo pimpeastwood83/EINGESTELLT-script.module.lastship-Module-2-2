@@ -24,6 +24,9 @@ import base64
 
 from resources.lib.modules import cfscrape
 from resources.lib.modules import source_faultlog
+from resources.lib.modules import source_utils
+from resources.lib.modules import cleantitle
+
 
 
 class source:
@@ -32,14 +35,23 @@ class source:
         self.language = ['de']
         self.domains = ['hd-streams.org']
         self.base_link = 'https://hd-streams.org/'
-        self.movie_link= self.base_link + 'movies?perPage=54'
-        self.movie_link= self.base_link + 'seasons?perPage=54'
-        self.search=self.base_link + 'search?q=%s&movies=true&seasons=true&actors=false&didyoumean=false'
-        self.scraper=cfscrape.create_scraper()
+        self.movie_link = self.base_link + 'movies?perPage=54'
+        self.movie_link = self.base_link + 'seasons?perPage=54'
+        self.search = self.base_link + 'search?q=%s&movies=true&seasons=true&actors=false&didyoumean=false'
+        self.scraper = cfscrape.create_scraper()
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            url = self.__search(imdb)
+            objects = self.__search(imdb, True)
+
+            t = [cleantitle.get(i) for i in set(source_utils.aliases_to_array(aliases)) if i]
+            t.append(cleantitle.get(title))
+            t.append(cleantitle.get(localtitle))
+
+            for i in range(1, len(objects)):
+                if cleantitle.get(objects[i]['title']) in t:
+                    url = objects[i]['url']
+                    break
 
             return url
             
@@ -48,8 +60,15 @@ class source:
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
         try:
-            
-            return 
+            objects = self.__search(imdb, False)
+
+            t = [cleantitle.get(i) for i in set(source_utils.aliases_to_array(aliases)) if i]
+            t.append(cleantitle.get(tvshowtitle))
+            t.append(cleantitle.get(localtvshowtitle))
+
+            for i in range(1, len(objects)):
+                if cleantitle.get(objects[i]['title']) in t:
+                    return objects[i]['seasons']
         except:
             return
 
@@ -58,7 +77,9 @@ class source:
             if not url:
                 return
 
-            return 
+            url = [i['url'] for i in url if 'season/' + season in i['url']]
+
+            return url[0]
         except:
             return
 
@@ -137,9 +158,9 @@ class source:
     def resolve(self, url):
         return url
 
-    def __search(self, imdb):
+    def __search(self, imdb, isMovieSearch):
         try:
-            sHtmlContent=self.scraper.get(self.base_link).content
+            sHtmlContent = self.scraper.get(self.base_link).content
 
             pattern = '<meta name="csrf-token" content="([^"]+)">'
             string = str(sHtmlContent)
@@ -149,24 +170,16 @@ class source:
                 return #No Entry found?
             # first iteration of session object to be parsed for search
 
-            sHtmlContent=self.scraper.get(self.search % imdb,headers={'X-CSRF-TOKEN':token[0],'X-Requested-With':'XMLHttpRequest'}).text
-               
-            pattern = '"title":"([^"]+).*?"url":"([^"]+).*?src":"([^"]+)'
-            aResult = re.compile(pattern, re.DOTALL).findall(sHtmlContent)
-            
-            for sName, sUrl, sThumbnail in aResult:
-                url= sUrl.replace('\/', '/')
-                
-            return url
+            sHtmlContent = self.scraper.get(self.search % imdb, headers={'X-CSRF-TOKEN':token[0],'X-Requested-With':'XMLHttpRequest'}).text
+
+            content = json.loads(sHtmlContent)
+
+            if isMovieSearch:
+                returnObjects = content["movies"]
+            else:
+                returnObjects = content["series"]
+
+            return returnObjects
         except:
             source_faultlog.logFault(__name__, source_faultlog.tagSearch)
             return
-
-    def __get_ajax_object(self, html=None):
-        try:
-            r = client.request(self.base_link) if not html else html
-            r = re.findall('ajax_object\s*=\s*({.*?});', r)[0]
-            r = json.loads(r)
-            return r
-        except:
-            return {}
