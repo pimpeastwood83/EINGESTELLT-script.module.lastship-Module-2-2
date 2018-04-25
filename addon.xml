@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.module.lastship" name="Lastship Module" version="1.0.6.7~nightly7" provider-name="LastShip">
+<addon id="script.module.lastship" name="Lastship Module" version="1.0.6.7~nightly8" provider-name="LastShip">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>
@@ -9,8 +9,9 @@
 		<summary lang="en">lastship</summary>
 		<description>Viel Spaß mit LastShip</description>
 		<news lang="de">
+			- HDStreams Update
 			- Downgrade auf Stand Nightly3
-			- cfscraper Update (Zeitverzögerung)
+			- cfscraper Update 
 			- QuickFix 4K Quellen finden 
 			- Fix kinow
 			- Fix Foxx
