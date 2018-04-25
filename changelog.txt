@@ -1,3 +1,7 @@
+[B]1.0.6.7~nightly8[/B]
+- cfscraper update
+- HDStreams Update
+
 [B]1.0.6.7~nightly7[/B]
 - Downgrade auf Stand Nightly3
 - cfscraper Update (Zeitverzögerung)
