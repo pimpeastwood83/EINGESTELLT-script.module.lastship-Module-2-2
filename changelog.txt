@@ -1,24 +1,9 @@
-[B]1.0.6.7~nightly8[/B]
+[B]1.0.6.7[/B]
+  30.04.2018
 - cfscraper update
 - HDStreams Update
-
-[B]1.0.6.7~nightly7[/B]
-- Downgrade auf Stand Nightly3
-- cfscraper Update (Zeitverzögerung)
-
-[B]1.0.6.7~nightly6[/B]
-- TMDB als default Suche aktiviert, Suche via Trakt.tv optional 
-
-[B]1.0.6.7~nightly5[/B]
-- Fix TMDB Suche Update/Umstellung auf http
-
-[B]1.0.6.7~nightly4[/B]
 - TMDB Suche Update
-
-[B]1.0.6.7~nightly3[/B]
 - QuickFix 4K Quellen finden 
-
-[B]1.0.6.7~nightly2[/B]
 - Fix kinow
 - Fix Foxx
 - Update Kinoger
