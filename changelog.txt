@@ -1,3 +1,8 @@
+[B]1.0.6.8~nightly1[/B]
+- add vodhd
+- add movie-gg
+- add moovie
+
 [B]1.0.6.7[/B]
   30.04.2018
 - cfscraper update
