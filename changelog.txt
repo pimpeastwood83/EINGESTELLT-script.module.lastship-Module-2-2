@@ -1,3 +1,7 @@
+[B]1.0.6.8~nightly2[/B]
+- Fix Filme älter als 90 Tage (90 Day deleay)
+- Fix HidenCinema
+
 [B]1.0.6.8~nightly1[/B]
 - add vodhd
 - add movie-gg
