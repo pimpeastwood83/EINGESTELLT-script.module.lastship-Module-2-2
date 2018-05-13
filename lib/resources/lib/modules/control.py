@@ -133,10 +133,6 @@ libcacheFile = os.path.join(dataPath, 'library.db')
 
 cacheFile = os.path.join(dataPath, 'cache.db')
 
-key = "RgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6"
-
-iv = "p2s5v8y/B?E(H+Mb"
-
 def autoTraktSubscription(tvshowtitle, year, imdb, tvdb):
      from . import libtools
      libtools.libtvshows().add(tvshowtitle, year, imdb, tvdb)
@@ -252,7 +248,7 @@ def apiLanguage(ret_name=None):
     name = None
     name = setting('api.language')
     if not name: name = 'AUTO'
-    
+
     if name[-1].isupper():
         try: name = xbmc.getLanguage(xbmc.ENGLISH_NAME).split(' ')[0]
         except: pass
