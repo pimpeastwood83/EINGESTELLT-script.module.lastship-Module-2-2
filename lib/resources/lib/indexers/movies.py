@@ -34,6 +34,7 @@ from resources.lib.modules import views
 from resources.lib.modules import utils
 from resources.lib.indexers import navigator
 from resources.lib.modules import log_utils
+from datetime import date, timedelta
 
 import os,sys,re,json,urllib,urlparse,datetime
 
@@ -76,11 +77,11 @@ class movies:
         self.oscars_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&groups=oscar_best_picture_winners&sort=year,desc&count=40&start=1'
         self.theaters_link = 'http://www.imdb.com/search/title?title_type=feature&num_votes=1000,&release_date=date[365],date[0]&sort=release_date_us,desc&count=40&start=1'
         self.year_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&year=%s,%s&sort=moviemeter,asc&count=40&start=%s'
-        
+
         if self.hidecinema == 'true':
-            self.popular_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&groups=top_1000&release_date=,date[90]&sort=moviemeter,asc&count=40&start=1'
-            self.views_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&sort=num_votes,desc&release_date=,date[90]&count=40&start=1'
-            self.featured_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&release_date=date[365],date[90]&sort=moviemeter,asc&count=40&start=1'
+            self.popular_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&groups=top_1000&release_date=,%s&sort=moviemeter,asc&count=40&start=1' % (date.today() - timedelta(90))
+            self.views_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&sort=num_votes,desc&release_date=,%s' % (date.today() - timedelta(90))
+            self.featured_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&release_date=,%s&sort=moviemeter,asc&count=40&start=1' % (date.today() - timedelta(90))
             self.genre_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie,documentary&num_votes=100,&release_date=,date[90]&genres=%s&sort=moviemeter,asc&count=40&start=1'
             self.language_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&release_date=,date[90]&count=40&start=1'
             self.certification_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&certificates=us:%s&sort=moviemeter,asc&release_date=,date[90]&count=40&start=1'
@@ -102,7 +103,7 @@ class movies:
             self.oscars_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&groups=oscar_best_picture_winners&year=%s,%s&sort=year,desc&count=40&start=1' % (str(from_year), str(to_year))
             self.boxoffice_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&sort=boxoffice_gross_us,desc&year=%s,%s&count=40&start=1' % (str(from_year), str(to_year))
             self.popular_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&groups=top_1000&year=%s,%s&sort=moviemeter,asc&count=40&start=1' % (str(from_year), str(to_year))
-			
+
         self.added_link  = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&languages=en&num_votes=500,&production_status=released&release_date=%s,%s&sort=release_date,desc&count=20&start=1' % (self.year_date, self.today_date)
         self.trending_link = 'http://api.trakt.tv/movies/trending?limit=40&page=1'
         self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
@@ -189,15 +190,15 @@ class movies:
         navigator.navigator().addDirectoryItem(32603, 'movieSearchnew', 'search.png', 'DefaultMovies.png')
         try: from sqlite3 import dbapi2 as database
         except: from pysqlite2 import dbapi2 as database
-        
+
         dbcon = database.connect(control.searchFile)
         dbcur = dbcon.cursor()
-             
+
         try:
             dbcur.executescript("CREATE TABLE IF NOT EXISTS movies (ID Integer PRIMARY KEY AUTOINCREMENT, term);")
         except:
             pass
-            
+
         dbcur.execute("SELECT * FROM movies ORDER BY ID DESC")
         lst = []
 
@@ -208,12 +209,12 @@ class movies:
                 navigator.navigator().addDirectoryItem(term, 'movieSearchterm&name=%s' % term, 'search.png', 'DefaultMovies.png')
                 lst += [(term)]
         dbcur.close()
-        
+
         if delete_option:
             navigator.navigator().addDirectoryItem(32605, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
 
         navigator.navigator().endDirectory()
-        
+
     def search_new(self):
             control.idle()
 
@@ -222,10 +223,10 @@ class movies:
             q = k.getText() if k.isConfirmed() else None
 
             if (q == None or q == ''): return
-            
+
             try: from sqlite3 import dbapi2 as database
             except: from pysqlite2 import dbapi2 as database
-            
+
             dbcon = database.connect(control.searchFile)
             dbcur = dbcon.cursor()
             dbcur.execute("INSERT INTO movies VALUES (?,?)", (None,q.decode('utf-8')))
@@ -833,7 +834,7 @@ class movies:
                 except: artmeta = False
             except:
                 pass
-                
+
             try:
                 poster2 = art['movieposter']
                 poster2 = [x for x in poster2 if x.get('lang') == self.lang][::-1] + [x for x in poster2 if x.get('lang') == 'en'][::-1] + [x for x in poster2 if x.get('lang') in ['00', '']][::-1]
