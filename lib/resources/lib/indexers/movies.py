@@ -79,13 +79,15 @@ class movies:
         self.year_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&year=%s,%s&sort=moviemeter,asc&count=40&start=%s'
 
         if self.hidecinema == 'true':
-            self.popular_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&groups=top_1000&release_date=,%s&sort=moviemeter,asc&count=40&start=1' % (date.today() - timedelta(90))
-            self.views_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&sort=num_votes,desc&release_date=,%s' % (date.today() - timedelta(90))
-            self.featured_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&release_date=,%s&sort=moviemeter,asc&count=40&start=1' % (date.today() - timedelta(90))
-            self.genre_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie,documentary&num_votes=100,&release_date=,date[90]&genres=%s&sort=moviemeter,asc&count=40&start=1'
-            self.language_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&release_date=,date[90]&count=40&start=1'
-            self.certification_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=100,&production_status=released&certificates=us:%s&sort=moviemeter,asc&release_date=,date[90]&count=40&start=1'
-            self.boxoffice_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&production_status=released&sort=boxoffice_gross_us,desc&release_date=,date[90]&count=40&start=1'
+                delay = (date.today() - timedelta(90))
+                start_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&release_date=,%s' % (delay)
+                self.popular_link = start_link + '&num_votes=1000,&production_status=released&groups=top_1000&sort=moviemeter,asc&count=40&start=1'
+                self.views_link =  start_link + '&num_votes=1000,&production_status=released&sort=num_votes,desc&count=40&start=1'
+                self.featured_link = start_link + '&num_votes=1000,&production_status=released&sort=moviemeter,asc&count=40&start=1'
+                self.genre_link = start_link + ',documentary&num_votes=100,&genres=%s&sort=moviemeter,asc&count=40&start=1'
+                self.language_link = start_link + '&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&count=40&start=1'
+                self.certification_link = start_link + '&num_votes=100,&production_status=released&certificates=us:%s&sort=moviemeter,asc&count=40&start=1'
+                self.boxoffice_link = start_link + '&production_status=released&sort=boxoffice_gross_us,desc&count=40&start=1'
         else:
             self.popular_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&groups=top_1000&sort=moviemeter,asc&count=40&start=1'
             self.views_link = 'http://www.imdb.com/search/title?title_type=feature,tv_movie&num_votes=1000,&production_status=released&sort=num_votes,desc&count=40&start=1'
