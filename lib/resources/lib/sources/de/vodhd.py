@@ -17,7 +17,7 @@ class source:
         self.password=control.setting('vodhd.pass')
         self.server=control.setting('vodhd.server')
         self.host=self.server.replace("http://","")
-        
+                
         ## Generic ##
         self.login=self.server+"/login/authenticate"
         self.loginref=self.server+"/login/auth"
@@ -37,7 +37,7 @@ class source:
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
             
-            url = self.__search(localtitle,imdb)            
+            url = self.__search(localtitle,imdb)
             if not url:
                 url = self.__search(title,imdb)
 
@@ -45,32 +45,38 @@ class source:
         except:
             return
 
-    def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):        
-        url = self.__search(localtvshowtitle,imdb)                
+    def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
+        
+        url = self.__searchtv(localtvshowtitle,imdb)        
+      
+        if not url:
+            url = self.__searchtv(tvshowtitle,imdb)
+                
         return url
 
-    def episode(self, url, imdb, tvdb, title, premiered, season, episode):        
-        cookies=requests.utils.dict_from_cookiejar(self.session.cookies)        
-        sHtmlContent=self.session.get(self.showsearch %url,headers=self.header).json()
+    def episode(self, url, imdb, tvdb, title, premiered, season, episode):
         
+        cookies=requests.utils.dict_from_cookiejar(self.session.cookies)
+        sHtmlContent=self.session.get(self.showsearch %url,headers=self.header).json()
         for i in sHtmlContent:            
             if str(i['season_number'])==season and episode==str(i['episode_number']):                
                 episodeid=i['id']
                 break;                    
        
         sHtmlContent=self.session.get(self.episodesearch %episodeid,headers=self.header).json()        
-        url=sHtmlContent['files'][0]['src']        
+        url=sHtmlContent['files'][0]['src']
+        
         return url
 
     def sources(self, url, hostDict, hostprDict):
         sources = []
-        
+       
         try:
             if not url:
                 return sources
             
             url=self.server+url
-            cookies=requests.utils.dict_from_cookiejar(self.session.cookies)            
+            cookies=requests.utils.dict_from_cookiejar(self.session.cookies)        
             
             sources.append({'source': 'CDN', 'quality': '4K', 'language': 'de', 'url': url+"|Cookie=JSESSIONID="+cookies['JSESSIONID']+";streama_remember_me="+cookies['streama_remember_me'], 'direct': True, 'debridonly': False})
                 
@@ -88,12 +94,9 @@ class source:
             return
 
     def __login(self):
-        try:
-            print "print vodhd Login function. required for cookie handling"
-
+        try:           
             sHtmlContent=self.session.get(self.login)
-            sHtmlContent=self.session.post(self.login,headers=self.header,data=self.params)
-            
+            sHtmlContent=self.session.post(self.login,headers=self.header,data=self.params)         
             
             return 
         except:
@@ -101,23 +104,37 @@ class source:
 
         
     def __search(self, localtitle,imdb):
-        try:            
-            suchbegriff=cleantitle.getsearch(localtitle)            
+        try:
+            suchbegriff=cleantitle.getsearch(localtitle)           
             sHtmlContent=self.session.get(self.search %suchbegriff,headers=self.header).json()
-            
-            if sHtmlContent['movies']:
-                
-                for i in sHtmlContent['movies']:                    
+                                     
+            if sHtmlContent['movies']:                
+                for i in sHtmlContent['movies']:
                     if i['imdb_id']==imdb:
                         url=i['files'][0]['src']
-                        break                
-
-            if sHtmlContent['shows']:                
-                showid=sHtmlContent['shows'][0]['id']                
-                url=showid
-            
+                        break
+               
             return url
         except:
             return
 
-  
+
+
+        
+    def __searchtv(self, localtvshowtitle,imdb):
+        try:
+            
+            localtvshowtitle=re.sub(r"\([0-9]+\)","",localtvshowtitle )           
+            suchbegriff=cleantitle.getsearch(localtvshowtitle)           
+            sHtmlContent=self.session.get(self.search %suchbegriff,headers=self.header).json()
+                        
+            if sHtmlContent['shows']:                
+                for i in sHtmlContent['shows']:                    
+                    #if i['imdb_id']==imdb:
+                    url=i['id']
+                    break
+           
+            return url
+        except:
+            return
+
