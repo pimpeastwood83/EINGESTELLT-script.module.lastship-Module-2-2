@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.module.lastship" name="Lastship Module" version="1.0.6.8~nightly3" provider-name="LastShip">
+<addon id="script.module.lastship" name="Lastship Module" version="1.0.6.8~nightly4" provider-name="LastShip">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 	</requires>
@@ -9,6 +9,8 @@
 		<summary lang="en">lastship</summary>
 		<description>Viel Spaß mit LastShip</description>
 		<news lang="de">
+			- Update sources.py (VodHD als Premium erkennen)
+			- Update VodHD 
 			- Fix Serienstream
 			- Fix Filme 90 Tage deleay
 			- Fix HidenCinema
