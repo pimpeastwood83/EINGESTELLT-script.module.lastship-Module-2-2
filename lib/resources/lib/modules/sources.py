@@ -865,6 +865,11 @@ class sources:
                 else: self.sources[i]['label'] = label.upper()
             else: self.sources[i]['label'] = label.upper()
 
+            ## vodhd shown as premium link ##
+            if self.sources[i]['provider']=="vodhd":
+                if not prem_identify == 'nocolor':
+                    self.sources[i]['label'] = ('[COLOR %s]' % (prem_identify)) + label.upper() + '[/COLOR]'
+            
         try: 
             if not HEVC == 'true': self.sources = [i for i in self.sources if not 'HEVC' in i['label']]
         except: pass
