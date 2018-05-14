@@ -81,21 +81,23 @@ class source:
 
             r = dom_parser.parse_dom(r, 'div', attrs={'class': 'hosterSiteVideo'})
             r = dom_parser.parse_dom(r, 'li', attrs={'data-lang-key': re.compile('[1|3]')})
-            r = [(dom_parser.parse_dom(i, 'a', req='href'), dom_parser.parse_dom(i, 'h4'), 'subbed' if i.attrs['data-lang-key'] == '3' else '') for i in r]
-            r = [(i[0][0].attrs['href'], i[1][0].content.lower(), i[2]) for i in r if len(i[0]) > 0 and len(i[1]) > 0]
-            r = [(i[0], i[1], re.findall('(.+?)\s*<br\s*/?>(.+?)$', i[1], re.DOTALL), i[2]) for i in r]
-            r = [(i[0], i[2][0][0] if len(i[2]) > 0 else i[1], i[2][0][1] if len(i[2]) > 0 else '', i[3]) for i in r]
-            r = [(i[0], i[1], 'HD' if 'hosterhdvideo' in i[2] else 'SD', i[3]) for i in r]
+            r = [(i.attrs['data-link-target'], dom_parser.parse_dom(i, 'h4'),
+                  'subbed' if i.attrs['data-lang-key'] == '3' else '' if i.attrs['data-lang-key'] == '1' else '') for i
+                 in r]
+            r = [(i[0], i[1][0].content, 'HD' if 'hd' in i[1][0][1].lower() else 'SD', i[2]) for i in r]
 
             for link, host, quality, info in r:
+                if 'HD' in quality: host = re.findall('(.+?)\s*<br', host)[0]
                 valid, host = source_utils.is_host_valid(host, hostDict)
                 if not valid: continue
 
-                sources.append({'source': host, 'quality': quality, 'language': 'de', 'url': link, 'info': info, 'direct': False, 'debridonly': False})
+                sources.append(
+                    {'source': host, 'quality': quality, 'language': 'de', 'url': link, 'info': info, 'direct': False,
+                     'debridonly': False})
 
             return sources
         except:
-            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
+            source_faultlog.logFault(__name__, source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -120,7 +122,7 @@ class source:
 
             return url
         except:
-            source_faultlog.logFault(__name__,source_faultlog.tagResolve)
+            source_faultlog.logFault(__name__, source_faultlog.tagResolve)
             return
 
     def __search(self, titles, year):
@@ -143,7 +145,7 @@ class source:
             r = sorted(r, key=lambda i: int(i[2]), reverse=True)  # with year > no year
             r = [i[0] for i in r if cleantitle.get(i[1]) in t and i[2] in y]
 
-            if len(r) > 0 :
+            if len(r) > 0:
                 return source_utils.strip_domain(r[0])
             return ""
         except:
