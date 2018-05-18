@@ -1,3 +1,6 @@
+[B]1.0.6.8~nightly5[/B]
+- bs.to (Captcha und API changed) und alluc.ee (Seite stillgelegt) entfernt
+
 [B]1.0.6.8~nightly4[/B]
 - Update sources.py (VodHD als Premium erkennen)
 - Update VodHD 
