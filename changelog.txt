@@ -1,3 +1,6 @@
+[B]1.0.6.8~nightly8[/B]
+-  Update animeloads
+
 [B]1.0.6.8~nightly7[/B]
 - cine.to entfernt (Captcha)
 - Pure-Anime.tv (Seite gibt es nicht mehr)
