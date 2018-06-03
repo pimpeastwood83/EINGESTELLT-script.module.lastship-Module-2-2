@@ -48,9 +48,6 @@ class source:
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            import pydevd
-            pydevd.settrace('localhost', port=12345, stdoutToServer=True, stderrToServer=True)
-
             url = self.__search(imdb, [localtitle] + source_utils.aliases_to_array(aliases), year)
             if not url and title != localtitle: url = self.__search(imdb, [title] + source_utils.aliases_to_array(aliases), year)
             return url
@@ -135,7 +132,7 @@ class source:
         try:
             h = urlparse.urlparse(url.strip().lower()).netloc
 
-            r = client.request(url)
+            r = self.scraper.get(url).content
             r = r.rsplit('"underplayer"')[0].rsplit("'underplayer'")[0]
 
             u = re.findall('\'(.+?)\'', r) + re.findall('\"(.+?)\"', r)
