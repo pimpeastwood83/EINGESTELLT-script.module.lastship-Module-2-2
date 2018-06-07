@@ -34,14 +34,14 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['de']
-        self.domains = ['movie2k.sh']
-        self.base_link = 'http://www.movie2k.sh'
+        self.domains = ['movie4k.lt']
+        self.base_link = 'http://www.movie4k.lt'
         self.search_link = '/search/%s'
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            url = self.__search([localtitle] + source_utils.aliases_to_array(aliases))
-            if not url and title != localtitle: url = self.__search([title] + source_utils.aliases_to_array(aliases))
+            url = self.__search([localtitle] + source_utils.aliases_to_array(aliases), year)
+            if not url and title != localtitle: url = self.__search([title] + source_utils.aliases_to_array(aliases), year)
             return url
         except:
             return
@@ -51,37 +51,25 @@ class source:
         try:
             if not url:
                 return sources
-            query = urlparse.urljoin(self.base_link, url)
-            r = client.request(query)
+            r = client.request(url)
 
-            r = dom_parser.parse_dom(r, 'div', attrs={'id': 'tab-plot_german'})
-            r = dom_parser.parse_dom(r, 'tbody')
-            r = dom_parser.parse_dom(r, 'tr')
+            links = dom_parser.parse_dom(r, 'div', attrs={'id': 'tab-plot_german'})
+            links = dom_parser.parse_dom(links, 'tbody')
+            links = dom_parser.parse_dom(links, 'tr')
+            links = [(dom_parser.parse_dom(i,'a')[0],
+                      dom_parser.parse_dom(i,'td', attrs={'class': 'votesCell'})[0])
+                     for i in links if "gif" in i.content]
 
-            for count, i in enumerate(r):
-                link = dom_parser.parse_dom(i,'a')
-                if link is None or len(link) == 0:
-                    continue
-                link = link[0]
-                hoster = link.content
+            links = [(i[0][1], i[0].attrs['href'], source_utils.get_release_quality(i[1].content)) for i in links]
 
+            for hoster, link, quality in links:
                 valid, hoster = source_utils.is_host_valid(hoster, hostDict)
+
                 if not valid:
                     continue
-
-                link = link.attrs["href"].strip('\r')
-                if link.startswith('?'):
-                    link = query+link
-
-                if '5.gif' in i.content:
-                    quality = 'HD'
-                else:
-                    quality = 'SD'
-
+                if '?' in link:
+                    link = urlparse.urljoin(self.base_link, url, link)
                 sources.append({'source': hoster, 'quality': quality, 'language': 'de', 'url': link, 'direct': False, 'debridonly': False, 'checkquality': True})
-
-                if count == 5:
-                    break
 
             return sources
         except:
@@ -91,13 +79,11 @@ class source:
     def resolve(self, url):
         try:
             if self.base_link in url:
-                #scrape it once again
                 r = client.request(url)
-                #get base64 iframe
-                s = re.compile("dingdong\('([^']+)").findall(r)[0]
+                s = re.findall("dingdong\('(.*?)'", r)[0]
                 s = base64.b64decode(s)
-                s = re.compile("src=\"([^\"]+)").findall(s)[0]
-                return s.strip('/')
+                s = re.findall("src=\"(.*?)\"", s)[0]
+                url = s.strip('/')
             else:
                 return url
 
@@ -105,8 +91,7 @@ class source:
             source_faultlog.logFault(__name__,source_faultlog.tagResolve)
             return url
 
-    def __search(self, titles):
-
+    def __search(self, titles, year):
         try:
             query = self.search_link % (urllib.quote_plus(urllib.quote_plus(cleantitle.query(titles[0]))))
             query = urlparse.urljoin(self.base_link, query)
@@ -115,16 +100,13 @@ class source:
 
             r = client.request(query)
 
-            r = dom_parser.parse_dom(r, 'ul', attrs={'class': 'coverBox'})
-            r = dom_parser.parse_dom(r, 'li')
-            r = dom_parser.parse_dom(r, 'span', attrs={'class': 'name'})
-            r = dom_parser.parse_dom(r, 'a')
-
-            for i in r:
+            links = dom_parser.parse_dom(r, 'a', attrs={'class': 'coverImage'})
+            links = [(i.attrs['href'], re.findall('(.*?)\(', i.attrs['title'])[0]) for i in links if year in i.content]
+            for i in links:
                 title = i[1]
                 title = cleantitle.get(title)
                 if title in t:
-                    return source_utils.strip_domain(i[0]['href'])
+                    return i[0]
                 else:
                     continue
             return ""
