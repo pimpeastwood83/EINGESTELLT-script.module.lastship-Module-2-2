@@ -140,6 +140,11 @@ class source:
             u = [i for i in u if i.startswith('http') and not h in i]
 
             url = u[-1].encode('utf-8')
+            if 'bit.ly' in url:
+                url = self.scraper.get(url).url
+            elif 'nullrefer.com' in url:
+                url = url.replace('nullrefer.com/?', '')
+
             return url
         except:
             source_faultlog.logFault(__name__,source_faultlog.tagResolve)
