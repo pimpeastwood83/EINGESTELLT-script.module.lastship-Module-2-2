@@ -81,18 +81,18 @@ class source:
         try:
             if not url:
                 return sources
-
             url = urlparse.urljoin(self.base_link, url)
-            r = self.scraper.get(url).content
+            temp = self.scraper.get(url)
+            link = re.findall('iframe\ssrc="(.*?view\.php.*?)"', temp.content)[0]
+            if link.startswith('//'):
+                link = "https:" + link
 
-            link = dom_parser.parse_dom(r, 'iframe', attrs={'width': '100%'})[0].attrs['src']
-            r = self.scraper.get(link).content
+            r = self.scraper.get(link, headers={'referer': url}).content
             phrase = re.findall('jbdaskgs = \'(.*)?\'', r)[0]
             links = self._decodePhrase(phrase)
 
-            [sources.append({'source': 'CDN', 'quality': i['label'], 'language': 'de', 'url': i['file'], 'direct': True,
+            [sources.append({'source': 'CDN', 'quality': i['type'], 'language': 'de', 'url': i['file'], 'direct': True,
                          'debridonly': False}) for i in links]
-
             return sources
         except:
             source_faultlog.logFault(__name__,source_faultlog.tagScrape)
