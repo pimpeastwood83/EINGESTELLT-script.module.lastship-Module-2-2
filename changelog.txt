@@ -1,5 +1,5 @@
 [B]1.0.6.9~nightly1[/B]
-- Neu Aamazon
+- Add Aamazon
 
 [B]1.0.6.8[/B]
   08.06.2018
