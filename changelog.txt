@@ -1,3 +1,9 @@
+[B]1.0.6.8~nightly9[/B]
+- Update foxx
+- Upate movie2k-sh (Neue Domain movie2k-sc)
+- Update movie4k
+- Add movie4k-lt
+
 [B]1.0.6.8~nightly8[/B]
 -  Update animeloads
 
