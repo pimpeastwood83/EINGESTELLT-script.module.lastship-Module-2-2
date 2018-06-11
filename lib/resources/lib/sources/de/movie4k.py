@@ -71,9 +71,7 @@ class source:
 
             url = urlparse.urljoin(self.base_link, url)
 
-            r = client.request(url)
-            if r is None:
-                r = self.scraper.get(url).content
+            r = self.scraper.get(url).content
 
             seasonMapping = dom_parser.parse_dom(r, 'select', attrs={'name': 'season'})
             seasonMapping = dom_parser.parse_dom(seasonMapping, 'option', req='value')
@@ -98,9 +96,7 @@ class source:
 
             url = urlparse.urljoin(self.base_link, url)
 
-            r = client.request(url)
-            if r is None:
-                r = self.scraper.get(url).content
+            r = self.scraper.get(url).content
             r = r.replace('\\"', '"')
 
             links = dom_parser.parse_dom(r, 'tr', attrs={'id': 'tablemoviesindex2'})
@@ -157,9 +153,7 @@ class source:
 
             t = [cleantitle.get(i) for i in set(titles) if i]
 
-            r = client.request(q)
-            if r is None:
-                r = self.scraper.get(q).content
+            r = self.scraper.get(q).content
 
             links = dom_parser.parse_dom(r, 'tr', attrs={'id': re.compile('coverPreview.+?')})
             tds = [dom_parser.parse_dom(i, 'td') for i in links]
@@ -188,9 +182,7 @@ class source:
             for domain in self.domains:
                 try:
                     url = 'http://%s' % domain
-                    r = client.request(url)
-                    if r is None:
-                        r = self.scraper.get(url).content
+                    r = self.scraper.get(url).content
                     r = dom_parser.parse_dom(r, 'meta', attrs={'name': 'author'}, req='content')
                     if r and 'movie4k.io' in r[0].attrs.get('content').lower():
                         return url
