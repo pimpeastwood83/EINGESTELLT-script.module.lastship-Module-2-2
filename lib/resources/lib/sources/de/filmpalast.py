@@ -125,20 +125,21 @@ class source:
 
     def __search(self, titles):
         try:
-            query = self.search_link % (urllib.quote_plus(titles[0]))
-            query = urlparse.urljoin(self.base_link, query)
-
             t = [cleantitle.get(i) for i in set(titles) if i]
 
-            r = client.request(query)
+            for title in titles:
+                query = self.search_link % (urllib.quote_plus(title))
+                query = urlparse.urljoin(self.base_link, query)
 
-            r = dom_parser.parse_dom(r, 'article')
-            r = dom_parser.parse_dom(r, 'a', attrs={'class': 'rb'}, req='href')
-            r = [(i.attrs['href'], i.content) for i in r]
-            r = [i[0] for i in r if cleantitle.get(i[1]) in t]
+                r = client.request(query)
 
-            if len(r) > 0:
-                return source_utils.strip_domain(r[0])
+                r = dom_parser.parse_dom(r, 'article')
+                r = dom_parser.parse_dom(r, 'a', attrs={'class': 'rb'}, req='href')
+                r = [(i.attrs['href'], i.content) for i in r]
+                r = [i[0] for i in r if cleantitle.get(i[1]) in t]
+
+                if len(r) > 0:
+                    return source_utils.strip_domain(r[0])
 
             return
         except:
