@@ -135,7 +135,7 @@ class source:
             r = [x[0].attrs['href'] for x in r if int(x[1]) == int(year)]
 
             if len(r) > 0:
-                return r[0]
+                return source_utils.strip_domain(r[0])
 
             return ""
 
