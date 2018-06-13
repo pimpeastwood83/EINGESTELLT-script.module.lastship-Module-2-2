@@ -1,5 +1,3 @@
-
-
 import time
 import datetime
 import cache
@@ -41,8 +39,12 @@ def init():
     try:
         dbcon = db.connect(control.providercacheFile)
         dbcur = dbcon.cursor()
-        dbcur.executescript("CREATE TABLE IF NOT EXISTS %s (ID Integer PRIMARY KEY AUTOINCREMENT, provider TEXT, tag TEXT, date INTEGER);" % faultTable)
+        dbcur.executescript("CREATE TABLE IF NOT EXISTS %s (ID Integer PRIMARY KEY AUTOINCREMENT, provider TEXT, tag TEXT, date INTEGER, info TEXT);" % faultTable)
         dbcur.execute("DELETE FROM %s WHERE date < ?;" % faultTable, (timelimit,))
+        try:
+            dbcur.execute("SELECT info FROM %s" % faultTable)
+        except:
+            dbcur.executescript("ALTER Table %s ADD info TEXT" % faultTable)
         dbcon.commit()
         dbcur.close()
         del dbcur
@@ -52,20 +54,21 @@ def init():
 
     cache.cache_insert(triggerCacheSetting, now)
 
-def logFault(provider, tag):
+
+def logFault(provider, tag, additional_info=""):
     now = int(time.time())
     try:
         dbcon = db.connect(control.providercacheFile)
         dbcur = dbcon.cursor()
-        dbcur.execute("INSERT INTO %s VALUES (null,?,?,?)" % faultTable, (provider, tag, now))
+        dbcur.execute("INSERT INTO %s VALUES (null,?,?,?,?)" % faultTable, (provider, tag, now, additional_info))
         dbcon.commit()
-        dbcur.execute("SELECT COUNT(*) FROM %s WHERE provider=? AND tag <> ? " %faultTable, (provider, tagDisabled))
+        dbcur.execute("SELECT COUNT(*) FROM %s WHERE provider=? AND tag <> ? " % faultTable, (provider, tagDisabled))
         num_latest_faults = dbcur.fetchone()[0]
         if num_latest_faults >= maxFaultsPerDay:
-            dbcur.execute("INSERT INTO %s VALUES (null,?,?,?)" % faultTable, (provider, tagDisabled, now))
+            dbcur.execute("INSERT INTO %s VALUES (null,?,?,?,?)" % faultTable, (provider, tagDisabled, now, additional_info))
             dbcon.commit()
             from resources.lib.modules import client
-            temp = '%s-%s' % (provider, tag)
+            temp = '%s-%s-%s' % (provider, tag, additional_info)
             client.request(base64.b64decode(statisticURL) % (temp, now+hoursTillRecheck*60*60))
         dbcur.close()
         del dbcur
@@ -73,6 +76,7 @@ def logFault(provider, tag):
     except:
         pass
     return
+
 
 def isEnabled(provider):
     try:
@@ -89,6 +93,7 @@ def isEnabled(provider):
     except:
         return True
     return True
+
 
 def getFaultInfoString():
     faults = getFaults()
@@ -107,7 +112,6 @@ def getFaultInfoString():
             info += ", tag: "+faultProvider[3]+"\n"
 
     return info
-
 
 
 def getFaults():

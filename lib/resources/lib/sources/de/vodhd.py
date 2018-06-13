@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import json
 import requests
 import re
 from resources.lib.modules import cleantitle
@@ -117,9 +116,6 @@ class source:
             return url
         except:
             return
-
-
-
         
     def __searchtv(self, localtvshowtitle,imdb):
         try:

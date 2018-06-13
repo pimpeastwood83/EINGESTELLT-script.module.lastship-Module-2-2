@@ -181,7 +181,10 @@ class source:
                 return source_utils.strip_domain(links[0])
             return ""
         except:
-            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
+            try:
+                source_faultlog.logFault(__name__, source_faultlog.tagSearch, titles[0])
+            except:
+                return
             return
 
     def __google(self, url):

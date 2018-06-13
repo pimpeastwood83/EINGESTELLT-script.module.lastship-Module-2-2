@@ -174,7 +174,10 @@ class source:
             if len(urls) > 0:
                 return source_utils.strip_domain(urls[0])
         except:
-            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
+            try:
+                source_faultlog.logFault(__name__, source_faultlog.tagSearch, titles[0])
+            except:
+                return
             return
 
     def __get_base_url(self, fallback):

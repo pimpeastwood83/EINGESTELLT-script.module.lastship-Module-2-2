@@ -119,10 +119,10 @@ class source:
                         return source_utils.strip_domain(link.attrs['href']) #Der Link-Text stimmt mit dem gesuchten überein, also Done.
 
             return url
-
-            
-            
                         
         except:
-            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
+            try:
+                source_faultlog.logFault(__name__, source_faultlog.tagSearch, titles[0])
+            except:
+                return
             return

@@ -96,7 +96,10 @@ class source:
 
             return nameUrlTuples
         except:
-            source_faultlog.logFault(__name__,source_faultlog.tagSearch)
+            try:
+                source_faultlog.logFault(__name__, source_faultlog.tagSearch, localtvshowtitle)
+            except:
+                return
             return
 
     def episode(self, url, imdb, tvdb, title, premiered, season, episode):
@@ -107,7 +110,10 @@ class source:
 
             return (episode, url)
         except:
-            source_faultlog.logFault(__name__,source_faultlog.tagSearch)
+            try:
+                source_faultlog.logFault(__name__, source_faultlog.tagSearch, title)
+            except:
+                return
             return
 
     def sources(self, url, hostDict, hostprDict):

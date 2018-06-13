@@ -111,5 +111,8 @@ class source:
                     continue
             return ""
         except:
-            source_faultlog.logFault(__name__,source_faultlog.tagSearch)
+            try:
+                source_faultlog.logFault(__name__, source_faultlog.tagSearch, titles[0])
+            except:
+                return
             return

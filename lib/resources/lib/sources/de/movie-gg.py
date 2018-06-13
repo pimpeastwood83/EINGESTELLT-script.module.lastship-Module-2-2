@@ -11,29 +11,22 @@ class source:
         self.priority = 1
         self.language = ['de']
         self.base_link_api = 'https://movies.gg/MovieAPI?'
-        self.getimdb='movie_info_imdb=%s'
-        self.getlinks='get_links=%s'        
-        self.key=base64.b64decode('JmtleT15a0RGS2JOSlpwSUF5NGZYc1dYWA==')
+        self.getimdb = 'movie_info_imdb=%s'
+        self.getlinks = 'get_links=%s'
+        self.key = base64.b64decode('JmtleT15a0RGS2JOSlpwSUF5NGZYc1dYWA==')
         
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            
-            url=(self.base_link_api+self.getimdb %imdb+self.key)
-            #print "print movie.gg self search",url      
-
+            url = (self.base_link_api+self.getimdb % imdb+self.key)
             return url
         except:
             return
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
-        
-        
-        return url
+        return
 
     def episode(self, url, imdb, tvdb, title, premiered, season, episode):
-   
-        
         return url
 
     def sources(self, url, hostDict, hostprDict):
@@ -79,6 +72,3 @@ class source:
 
     def resolve(self, url):
         return url
-
-
-  

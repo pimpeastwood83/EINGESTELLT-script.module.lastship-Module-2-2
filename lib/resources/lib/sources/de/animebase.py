@@ -94,7 +94,7 @@ class source:
 
             return sources
         except:
-            source_faultlog.logFault(__name__,source_faultlog.tagScrape)
+            source_faultlog.logFault(__name__, source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
@@ -111,7 +111,7 @@ class source:
 
             return url
         except:
-            source_faultlog.logFault(__name__,source_faultlog.tagResolve)
+            source_faultlog.logFault(__name__, source_faultlog.tagResolve)
             return
 
     def __search(self, title):
@@ -127,5 +127,8 @@ class source:
 
             return source_utils.strip_domain(r[0])
         except:
-            source_faultlog.logFault(__name__,source_faultlog.tagSearch)
+            try:
+                source_faultlog.logFault(__name__, source_faultlog.tagSearch, title)
+            except:
+                return
             return

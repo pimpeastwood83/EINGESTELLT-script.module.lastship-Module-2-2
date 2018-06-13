@@ -181,5 +181,7 @@ class source:
 
             return returnObjects
         except:
-            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
-            return
+            try:
+                source_faultlog.logFault(__name__, source_faultlog.tagSearch, imdb)
+            except:
+                return             return

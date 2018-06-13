@@ -100,9 +100,12 @@ class source:
 
             r = [i[0] for i in r if cleantitle.get(i[1]) in t]
 
-            if len(r) > 0 :
+            if len(r) > 0:
                 return source_utils.strip_domain(r[0])
             return ""
         except:
-            source_faultlog.logFault(__name__, source_faultlog.tagSearch)
+            try:
+                source_faultlog.logFault(__name__, source_faultlog.tagSearch, titles[0])
+            except:
+                return
             return

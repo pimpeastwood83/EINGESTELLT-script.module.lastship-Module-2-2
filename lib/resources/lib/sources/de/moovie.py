@@ -18,8 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-
-import re
 import urllib
 import urlparse
 import requests
@@ -27,10 +25,7 @@ import json
 import base64
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_utils
-
-
-
-
+from resources.lib.modules import source_faultlog
 
 class source:
     def __init__(self):
@@ -45,9 +40,9 @@ class source:
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
             
-            query=self.base_link+"all?type=movie&query="+title
+            query = self.base_link+"all?type=movie&query="+title
             response = requests.Session().get(query) 
-            content=json.loads(response.text)
+            content = json.loads(response.text)
             
             d = {}
             for data in content:                
@@ -57,14 +52,14 @@ class source:
                 if key == imdb:                    
                     jid=str(value)                   
             
-            query=self.base_link+"get?locale=de&hosters=!tata.to,!hdfilme.tv,!1fichier.com,!share-online.biz,!uploadrocket.net,!oboom.com&resolutions=hd&language=de&id="+jid
+            query = self.base_link+"get?locale=de&hosters=!tata.to,!hdfilme.tv,!1fichier.com,!share-online.biz,!uploadrocket.net,!oboom.com&resolutions=hd&language=de&id="+jid
                         
             response = requests.Session().get(query)
-            content=response.json()
-            array=content['get']['links']            
+            content = response.json()
+            array = content['get']['links']
             linklist = []
             for idx, word in enumerate(array):               
-                link=self.base_link+"link?hoster="+(word['hoster'])+"&language=de&resolution=hd&id="+jid+"&parts=1"+"&quality="+str(word['quality'])+"&subtitles="
+                link = self.base_link+"link?hoster="+(word['hoster'])+"&language=de&resolution=hd&id="+jid+"&parts=1"+"&quality="+str(word['quality'])+"&subtitles="
                 linklist.append(link)          
 
             urllist = []
@@ -78,7 +73,7 @@ class source:
                 except:
                     print "print exception"
                     #print "print linklist", urllist
-            url=urllist
+            url = urllist
             
             return url
         except:            
@@ -120,23 +115,8 @@ class source:
 
             return sources
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagScrape)
             return sources
 
     def resolve(self, url):
         return url
-
-    def __search(self, titles, year, season='0'):
-        try:
-            query = self.search_link % (urllib.quote_plus(cleantitle.query(titles[0])))
-            query = urlparse.urljoin(self.base_link, query)
-
-            t = [cleantitle.get(i) for i in set(titles) if i]
-            y = ['%s' % str(year), '%s' % str(int(year) + 1), '%s' % str(int(year) - 1), '0']
-
-            
-
-            url = source_utils.strip_domain(r)
-            url = url.replace('-info', '-stream')
-            return url
-        except:
-            return

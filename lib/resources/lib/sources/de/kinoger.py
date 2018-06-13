@@ -9,6 +9,7 @@ from resources.lib.modules import cfscrape
 from resources.lib.modules import dom_parser
 from resources.lib.modules import source_utils
 from resources.lib.modules import cleantitle
+from resources.lib.modules import source_faultlog
 
 class source:
     def __init__(self):
@@ -148,6 +149,7 @@ class source:
                     
             return sources
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagScrape)
             return sources
 
 
@@ -160,6 +162,7 @@ class source:
                 return request[0]+ '|Referer=' + url
             return url
         except:
+            source_faultlog.logFault(__name__, source_faultlog.tagResolve)
             return url
 
     def __search(self, localtitle, aliases ,year):
@@ -202,6 +205,10 @@ class source:
                 
             return
         except:
+            try:
+                source_faultlog.logFault(__name__, source_faultlog.tagSearch, titles[0])
+            except:
+                return
             return
 
     def getHDGOStreams(self,url):
