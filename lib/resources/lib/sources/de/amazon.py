@@ -1,19 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import re
-import urllib
-import urlparse
-import os
-import sqlite3
 import xbmc
 
 import requests
-import urllib2
-import simplejson
+from resources.lib.modules import source_faultlog
 
-
-from resources.lib.modules import control
-from resources.lib.modules import source_utils
 from resources.lib.modules import cleantitle
 
 BaseUrl = 'https://www.amazon.de'
@@ -86,25 +77,32 @@ class source:
         return url
 
     def __search(self, localtitle,year):
-        localtitle=cleantitle.getsearch(localtitle)
+        try:
+            localtitle=cleantitle.getsearch(localtitle)
         
-        query="https://atv-ps-eu.amazon.de/cdp/catalog/Search?firmware=fmw:17-app:2.0.45.1210&deviceTypeID=A2M4YX06LWP8WI&deviceID=1&format=json&version=2&formatVersion=3&marketplaceId=A1PA6795UKMFR9&IncludeAll=T&AID=1&searchString="+str(localtitle)+"&NumberOfResults=10&StartIndex=0&Detailed=T"
+            query="https://atv-ps-eu.amazon.de/cdp/catalog/Search?firmware=fmw:17-app:2.0.45.1210&deviceTypeID=A2M4YX06LWP8WI&deviceID=1&format=json&version=2&formatVersion=3&marketplaceId=A1PA6795UKMFR9&IncludeAll=T&AID=1&searchString="+str(localtitle)+"&NumberOfResults=10&StartIndex=0&Detailed=T"
 
-        data = requests.get(query).json()
-      
+            data = requests.get(query).json()
 
-        for i in data['message']['body']['titles']:            
-            jahr=str(i['releaseOrFirstAiringDate']['valueFormatted'])
-            print "print AP Titel &Jahr",jahr,i['title']
-            if str(year)==jahr[0:4]:               
-                prime=i['formats'][0]['offers'][0]['offerType']
-               
-                if prime == "SUBSCRIPTION":                   
-                    asin = data['message']['body']['titles'][0]['titleId']
-                   
-                break;
-            
-        return asin
+
+            for i in data['message']['body']['titles']:
+                jahr=str(i['releaseOrFirstAiringDate']['valueFormatted'])
+                print "print AP Titel &Jahr",jahr,i['title']
+                if str(year)==jahr[0:4]:
+                    prime=i['formats'][0]['offers'][0]['offerType']
+
+                    if prime == "SUBSCRIPTION":
+                        asin = data['message']['body']['titles'][0]['titleId']
+
+                    break;
+
+            return asin
+        except:
+            try:
+                source_faultlog.logFault(__name__, source_faultlog.tagSearch, asin)
+            except:
+                return
+            return ""
 
     
 
