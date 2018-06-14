@@ -130,6 +130,7 @@ class source:
 
     def resolve(self, url):
         try:
+            import json
             return al()._resolve(url)
         except:
             source_faultlog.logFault(__name__, source_faultlog.tagResolve)
@@ -143,6 +144,10 @@ class source:
             t = [cleantitle.get(i) for i in set(titles) if i]
 
             r = client.request(query)
+            pageTitle = dom_parser.parse_dom(r, 'title')[0].content.lower()
+            if "search" not in pageTitle and 'such' not in pageTitle:
+                if len([year in pageTitle and i in pageTitle for i in t]) > 0:
+                    return dom_parser.parse_dom(r, 'meta', attrs={'property': 'og:url'})[0].attrs['content']
 
             r = dom_parser.parse_dom(r, 'div', attrs={'id': 'main'})
             r = dom_parser.parse_dom(r, 'div', attrs={'class': 'panel-body'})
