@@ -1,3 +1,6 @@
+[B]1.0.6.9~nightly3[/B]
+- TMovie entfernt
+
 [B]1.0.6.9~nightly2[/B]
 - Update cleantitle.py (Umlaute Update)
 - Update Provider-Fault-Logging und source_faultlog.py for New Logging (Update Fehlerhafte Provider melden)
