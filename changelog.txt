@@ -1,3 +1,6 @@
+[B]1.0.7.0~nightly1[/B]
+- Add Amazon
+
 [B]1.0.6.9[/B]
 - TMovie entfernt
 - Update cleantitle.py (Umlaute Update)
