@@ -2,6 +2,7 @@
 - Add Amazon
 
 [B]1.0.6.9[/B]
+  15.06.2018
 - TMovie entfernt
 - Update cleantitle.py (Umlaute Update)
 - Update Provider-Fault-Logging und source_faultlog.py for New Logging (Update Fehlerhafte Provider melden)
