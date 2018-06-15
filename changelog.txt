@@ -1,14 +1,10 @@
-[B]1.0.6.9~nightly3[/B]
+[B]1.0.6.9[/B]
 - TMovie entfernt
-
-[B]1.0.6.9~nightly2[/B]
 - Update cleantitle.py (Umlaute Update)
 - Update Provider-Fault-Logging und source_faultlog.py for New Logging (Update Fehlerhafte Provider melden)
 - Fix Foxx
 - Fix Filmpalast (Fix Suche)
-
-[B]1.0.6.9~nightly1[/B]
-- Add Amazon
+- Fix/Update Animeloads
 
 [B]1.0.6.8[/B]
   08.06.2018
