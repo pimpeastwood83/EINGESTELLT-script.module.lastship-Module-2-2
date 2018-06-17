@@ -24,8 +24,12 @@ class source:
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            url = self.__search([localtitle] + source_utils.aliases_to_array(aliases), year)
+            titles = [localtitle] + source_utils.aliases_to_array(aliases)
+            url = self.__search(titles, year)
             if not url and title != localtitle: url = self.__search([title] + source_utils.aliases_to_array(aliases), year)
+            if not url:
+                from resources.lib.modules import duckduckgo
+                url = duckduckgo.search(titles, year, self.domains[0])
             return url
         except:
             return
@@ -72,6 +76,8 @@ class source:
         try:
             if not url:
                 return sources
+
+            url = url.replace('-info', '-stream')
 
             r = re.findall('(\d+)-stream(?:\?episode=(\d+))?', url)
             r = [(i[0], i[1] if i[1] else '1') for i in r][0]
@@ -140,7 +146,6 @@ class source:
                 return
 
             url = source_utils.strip_domain(r)
-            url = url.replace('-info', '-stream')
             return url
         except:
             try:
