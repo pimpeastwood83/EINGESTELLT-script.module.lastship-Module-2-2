@@ -1,5 +1,15 @@
-[B]1.0.7.0~nightly1[/B]
-- Add Amazon
+[B]1.0.7.0[/B]
+  17.06.2018
+- add duckduckgo (Fallback HDFilme)
+  UPDATE:
+- Fox (Qualitätsanzeige)
+- HDFilme mit Fallback
+- Proxer (Suche)
+- Serienstream (Movies entfernt)
+- HDStreams (Fix Typos)
+- Kinoger (Fix Typos)
+- kinox (Fix Typos)
+- Streamdream (Fix Typos)
 
 [B]1.0.6.9[/B]
   15.06.2018
