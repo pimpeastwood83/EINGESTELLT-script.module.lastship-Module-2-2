@@ -1,3 +1,6 @@
+[B]1.0.7.1~nightly2[/B]
+- Seriesever entfernt, Seite Offline-Umleitung auf Moviesever
+
 [B]1.0.7.1~nightly1[/B]
 - Add Amazon
 
