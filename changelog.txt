@@ -1,3 +1,6 @@
+[B]1.0.7.1~nightly1[/B]
+- Add Amazon
+
 [B]1.0.7.0[/B]
   17.06.2018
 - add duckduckgo (Fallback HDFilme)
