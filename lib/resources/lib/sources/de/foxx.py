@@ -100,7 +100,7 @@ class source:
 
     def _decodePhrase(self, phrase):
         import json
-        Array = list('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/')
+        Array = list('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=')
         b = 0
         l = 0
         r = ''
@@ -113,7 +113,7 @@ class source:
                 l -= 8
 
                 a = (b >> l if b >= 0 else (b + 0x100000000) >> l) & 0xff
-                if count < len(phrase):
+                if count < len(phrase) - 2:
                     r = r + unichr(a)
 
         return json.loads(r)
