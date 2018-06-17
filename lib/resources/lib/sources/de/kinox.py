@@ -156,7 +156,7 @@ class source:
             return ""
         except:
             try:
-                source_faultlog.logFault(__name__, source_faultlog.tagSearch, titles[0])
+                source_faultlog.logFault(__name__, source_faultlog.tagSearch, imdb)
             except:
                 return
             return

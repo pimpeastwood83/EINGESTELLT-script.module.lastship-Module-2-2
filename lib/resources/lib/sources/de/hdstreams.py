@@ -184,4 +184,5 @@ class source:
             try:
                 source_faultlog.logFault(__name__, source_faultlog.tagSearch, imdb)
             except:
-                return             return
+                return
+        return
