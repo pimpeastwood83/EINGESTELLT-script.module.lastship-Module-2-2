@@ -9,7 +9,16 @@
 		<summary lang="en">lastship</summary>
 		<description>Viel Spaß mit LastShip</description>
 		<news lang="de">
-			- Add Amazon
+			- add duckduckgo (Fallback HDFilme)
+			  UPDATE:
+			- Fox (Qualitätsanzeige)
+			- HDFilme mit Fallback
+			- Proxer (Suche)
+			- Serienstream (Movies entfernt)
+			- HDStreams (Fix Typos)
+			- Kinoger (Fix Typos)
+			- kinox (Fix Typos)
+			- Streamdream (Fix Typos)
 		</news>
 	</extension>
 </addon>
