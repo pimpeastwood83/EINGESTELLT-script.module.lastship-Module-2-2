@@ -18,17 +18,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import base64
+import json
 import re
 import urllib
 import urlparse
 
 from resources.lib.modules import anilist
-from resources.lib.modules import client
+from resources.lib.modules import cfscrape
 from resources.lib.modules import dom_parser
+from resources.lib.modules import source_faultlog
 from resources.lib.modules import source_utils
 from resources.lib.modules import tvmaze
-from resources.lib.modules import source_faultlog
-from resources.lib.modules import cfscrape
+
 
 class source:
     def __init__(self):
@@ -89,7 +91,7 @@ class source:
 
             r = self.scraper.get(link, headers={'referer': url}).content
             phrase = re.findall('jbdaskgs = \'(.*)?\'', r)[0]
-            links = self._decodePhrase(phrase)
+            links = json.loads(base64.b64decode(phrase))
 
             [sources.append({'source': 'CDN', 'quality': i['label'] if i['label'] in ['720p', '1080p'] else 'SD', 'language': 'de', 'url': i['file'], 'direct': True,
                          'debridonly': False}) for i in links]
@@ -97,26 +99,6 @@ class source:
         except:
             source_faultlog.logFault(__name__,source_faultlog.tagScrape)
             return sources
-
-    def _decodePhrase(self, phrase):
-        import json
-        Array = list('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=')
-        b = 0
-        l = 0
-        r = ''
-        for count, i in enumerate(phrase):
-            c = Array.index(i)
-            b = (b << 6) + c
-            l += 6
-
-            while l >= 8:
-                l -= 8
-
-                a = (b >> l if b >= 0 else (b + 0x100000000) >> l) & 0xff
-                if count < len(phrase) - 2:
-                    r = r + unichr(a)
-
-        return json.loads(r)
 
     def resolve(self, url):
         return url
