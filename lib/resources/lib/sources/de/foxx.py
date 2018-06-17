@@ -91,7 +91,7 @@ class source:
             phrase = re.findall('jbdaskgs = \'(.*)?\'', r)[0]
             links = self._decodePhrase(phrase)
 
-            [sources.append({'source': 'CDN', 'quality': i['type'], 'language': 'de', 'url': i['file'], 'direct': True,
+            [sources.append({'source': 'CDN', 'quality': i['label'] if i['label'] in ['720p', '1080p'] else 'SD', 'language': 'de', 'url': i['file'], 'direct': True,
                          'debridonly': False}) for i in links]
             return sources
         except:
@@ -119,8 +119,7 @@ class source:
         return json.loads(r)
 
     def resolve(self, url):
-        url = client.request(url, redirect=False)
-        return re.findall('http.*', url)[0]
+        return url
 
     def __search(self, titles, year):
         try:
