@@ -13,7 +13,7 @@ def cleanhtml(raw_html):
   return cleantext
 
 
-def search(titles, year, site):
+def search(titles, year, site, titleRegex):
     try:
         params = {
             'q': '%s site:%s' % (titles[0], site),
@@ -26,7 +26,7 @@ def search(titles, year, site):
             links = dom_parser.parse_dom(links, 'a')
             links = [(client.replaceHTMLCodes(i.content), i.attrs['href']) for i in links if site in i.attrs['href']]
 
-            links = [(re.findall('<b>(.*)?<', i[0])[0], i[1]) for i in links if re.search('<b>(.*)?<', i[0]) is not None]
+            links = [(re.findall(titleRegex, i[0])[0], i[1]) for i in links if re.search(titleRegex, i[0]) is not None]
             links = [(cleanhtml(i[0]), i[1], year in i[1]) for i in links]
 
             links = sorted(links, key=lambda i: i[2], reverse=True)  # with year > no year
