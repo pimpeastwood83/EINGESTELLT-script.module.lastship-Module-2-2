@@ -29,7 +29,7 @@ class source:
             if not url and title != localtitle: url = self.__search([title] + source_utils.aliases_to_array(aliases), year)
             if not url:
                 from resources.lib.modules import duckduckgo
-                url = duckduckgo.search(titles, year, self.domains[0])
+                url = duckduckgo.search(titles, year, self.domains[0], '(.*?)\sstream')
             return url
         except:
             return
