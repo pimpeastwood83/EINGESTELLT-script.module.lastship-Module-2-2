@@ -1,3 +1,6 @@
+[B]1.0.7.1~nightly4[/B]
+- Update movietown (add cloudflare scraper)
+
 [B]1.0.7.1~nightly3[/B]
 - Update HDFilme.tv
 - Update Duckduckgo
