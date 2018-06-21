@@ -22,6 +22,7 @@ import re
 import urllib
 import urlparse
 
+from resources.lib.modules import cfscrape
 from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import source_utils
@@ -36,6 +37,7 @@ class source:
         self.domains = ['movietown.org']
         self.base_link = 'http://movietown.org'
         self.search_link = '/search?q=%s'
+        self.scraper = cfscrape.create_scraper()
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
@@ -70,14 +72,13 @@ class source:
 
     def sources(self, url, hostDict, hostprDict):
         sources = []
-
         try:
             if not url:
                 return sources
 
             query = urlparse.urljoin(self.base_link, url)
 
-            r = client.request(query)
+            r = self.scraper.get(query).content
 
             r = dom_parser.parse_dom(r, 'div', attrs={'id': 'ko-bind'})
             r = dom_parser.parse_dom(r, 'table', attrs={'class': 'links-table'})
@@ -85,11 +86,6 @@ class source:
             r = dom_parser.parse_dom(r, 'tr')
             
             for i in r:
-                if re.search('(?<=<td>)(HD)(?=</td>)', i[1]):
-                    quality = 'HD'
-                else:
-                    quality = 'SD'
-
                 x = dom_parser.parse_dom(i, 'td', attrs={'class': 'name'}, req='data-bind')
 
                 if len(x) == 0:
@@ -121,7 +117,7 @@ class source:
 
             t = [cleantitle.get(i) for i in set(titles) if i]
 
-            r = client.request(query)
+            r = self.scraper.get(query).content
 
             r = dom_parser.parse_dom(r, 'figure', attrs={'class': 'pretty-figure'})
             r = dom_parser.parse_dom(r, 'figcaption')
