@@ -106,6 +106,8 @@ class source:
                 return sources
 
             for idx,items in enumerate(url):
+                if "clip" in items:                    
+                    sources.append({'source': "clipboard.cc", 'quality': 'HD', 'language': 'de', 'url':items , 'direct': True, 'debridonly': False})
 
                 valid, host = source_utils.is_host_valid(items, hostDict)
                 if not valid: continue                
