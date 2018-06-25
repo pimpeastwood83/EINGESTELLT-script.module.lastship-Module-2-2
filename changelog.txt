@@ -1,3 +1,6 @@
+[B]1.0.7.1~nightly6[/B]
+- Add HDKino
+
 [B]1.0.7.1~nightly5[/B]
 - Update moovie
 
