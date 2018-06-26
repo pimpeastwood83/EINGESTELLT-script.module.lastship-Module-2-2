@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    Lastship Add-on (C) 2017
+    Lastship Add-on (C) 2018
     Credits to Exodus and Covenant; our thanks go to their creators
 
     This program is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ def getPlaylistLinks(url):
         return [urlparse.urljoin('http://hdgo.cc', i) for i in links]
     return
 
+
 def getStreams(url, sources):
     hdgostreams = getHDGOStreams(url)
     if hdgostreams is not None:
@@ -44,18 +45,16 @@ def getStreams(url, sources):
             sources.append({'source': 'hdgo.cc', 'quality': quality[i], 'language': 'de',
                             'url': stream + '|Referer=' + url, 'direct': True,
                             'debridonly': False})
-
     return sources
 
 
 def getHDGOStreams(url):
     try:
         request = client.request(url, referer=url)
-        pattern = '<iframe[^>]src="//([^"]+)'
-        request = re.compile(pattern, re.DOTALL).findall(request)
-        request = client.request('http://' + request[0], referer=url)
+        request = dom_parser.parse_dom(request, 'iframe')[0].attrs['src']
+        request = client.request(urlparse.urljoin('http://', request), referer=url)
         pattern = "url:[^>]'([^']+)"
-        request = re.compile(pattern, re.DOTALL).findall(request)
+        request = re.findall(pattern, request, re.DOTALL)
         return request
     except:
         return None
