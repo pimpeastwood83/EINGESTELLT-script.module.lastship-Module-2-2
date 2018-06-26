@@ -75,11 +75,6 @@ class source:
 
     def resolve(self, url):
         try:
-            if 'kinoger' in url:
-                request = self.scraper.get(url).content
-                pattern = 'src:  "(.*?)"'
-                request = re.compile(pattern, re.DOTALL).findall(request)
-                return request[0]+ '|Referer=' + url
             return url
         except:
             source_faultlog.logFault(__name__, source_faultlog.tagResolve)
