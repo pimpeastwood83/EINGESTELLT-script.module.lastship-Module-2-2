@@ -4,12 +4,13 @@ import urllib
 import urlparse
 import re
 
-from resources.lib.modules import client
 from resources.lib.modules import cfscrape
 from resources.lib.modules import dom_parser
 from resources.lib.modules import source_utils
 from resources.lib.modules import cleantitle
 from resources.lib.modules import source_faultlog
+from resources.lib.modules import hdgo
+
 
 class source:
     def __init__(self):
@@ -17,10 +18,8 @@ class source:
         self.language = ['de']
         self.domains = ['kinoger.com']
         self.base_link = 'http://kinoger.com/'
-        self.search=self.base_link + 'index.php?do=search&subaction=search&search_start=1&full_search=0&result_from=1&story=%s'
-        self.scraper=cfscrape.create_scraper()
-
-        self.hdgo_quality = ["SD", "HD", "1080p", "2K", "4K"]
+        self.search = self.base_link + 'index.php?do=search&subaction=search&search_start=1&full_search=0&result_from=1&story=%s'
+        self.scraper = cfscrape.create_scraper()
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
@@ -46,7 +45,7 @@ class source:
         try:
             if not url:
                 return
-            
+
             data = urlparse.parse_qs(url)
             data = dict([(i, data[i][0]) if data[i] else (i, '') for i in data])
             if not data["url"]:
@@ -61,7 +60,6 @@ class source:
         try:
             if not url:
                 return sources
-
 
             data = urlparse.parse_qs(url)
             data = dict([(i, data[i][0]) if data[i] else (i, '') for i in data])
@@ -105,17 +103,8 @@ class source:
                     if source_link:
                         source_link = source_link.strip("'")
                         if "hdgo" in container.content:
-                            hdgostreams = self.getHDGOStreams(source_link)
-                            if hdgostreams is not None:
-                                if len(hdgostreams) > 1:
-                                    hdgostreams.pop(0)
-                                for i, stream in enumerate(hdgostreams):
-                                    sources.append({'source': 'hdgo.cc', 'quality': self.hdgo_quality[i], 'language': 'de',
-                                                    'url': stream + '|Referer=' + source_link, 'direct': True,
-                                                    'debridonly': False})
-                                    quality = self.hdgo_quality[i]
-                            else:
-                                continue
+                            sources = hdgo.getStreams(source_link, sources)
+
                         elif "namba" in container.content:
                             sources.append({'source': 'kinoger.com', 'quality': quality, 'language': 'de', 'url': "http://v1.kinoger.pw/vod/"+source_link, 'direct': False,
                                     'debridonly': False, 'checkquality': True})
@@ -125,17 +114,8 @@ class source:
                     if len(frame) == 0:
                         continue
                     if 'hdgo' in frame[0].attrs["src"]:
-                        hdgostreams = self.getHDGOStreams(frame[0].attrs["src"])
-                        if hdgostreams is not None:
-                            if len(hdgostreams) > 1:
-                                hdgostreams.pop(0)
-                            for i, stream in enumerate(hdgostreams):
-                                sources.append({'source': 'hdgo.cc', 'quality': self.hdgo_quality[i], 'language': 'de',
-                                                'url': stream + '|Referer=' + frame[0].attrs["src"], 'direct': True,
-                                                'debridonly': False})
-                                quality = self.hdgo_quality[i]
-                        else:
-                            continue
+                        sources = hdgo.getStreams(frame[0].attrs["src"], sources)
+
                     else:
                         valid, host = source_utils.is_host_valid(frame[0].attrs["src"], hostDict)
                         if not valid: continue
@@ -210,15 +190,3 @@ class source:
             except:
                 return
             return
-
-    def getHDGOStreams(self,url):
-        try:
-            request = client.request(url, referer=url)
-            pattern = '<iframe[^>]src="//([^"]+)'
-            request = re.compile(pattern, re.DOTALL).findall(request)
-            request = client.request('http://' + request[0], referer=url)
-            pattern = "url:[^>]'([^']+)"
-            request = re.compile(pattern, re.DOTALL).findall(request)
-            return request
-        except:
-            return None
