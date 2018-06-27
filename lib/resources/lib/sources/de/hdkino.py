@@ -86,7 +86,13 @@ class source:
             t = [cleantitle.get(i) for i in set(titles) if i]
 
             for title in titles:
-                query = self.search_link % title.decode('UTF-8').encode('Windows-1252')
+                query = self.search_link
+                try:
+                    title.encode('UTF-8')
+                    query %= urllib.quote_plus(title)
+                except:
+                    query %= title.decode('UTF-8').encode('Windows-1252')
+
                 query = urlparse.urljoin(self.base_link, query)
 
                 r = client.request(query)
