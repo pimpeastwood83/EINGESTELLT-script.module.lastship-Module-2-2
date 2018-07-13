@@ -1,3 +1,7 @@
+[B]1.0.7.1~nightly8[/B]
+-Add Cinematrix
+-Update VodHD
+
 [B]1.0.7.1~nightly7[/B]
 - Add and Update HDGO.py (Modules)
 - Add Cinemaxx
