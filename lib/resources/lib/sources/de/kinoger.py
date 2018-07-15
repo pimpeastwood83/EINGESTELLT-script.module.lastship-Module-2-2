@@ -23,10 +23,10 @@ class source:
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try:
-            url = self.__search(localtitle,aliases ,year)
+            url = self.__search([localtitle] + source_utils.aliases_to_array(aliases), year)
 
             if not url and title != localtitle:
-                url = self.__search(title, aliases, year)
+                url = self.__search([title] + source_utils.aliases_to_array(aliases), year)
             return urllib.urlencode({'url': url, 'imdb': re.sub('[^0-9]', '', imdb)}) if url else None
             
         except:
@@ -34,9 +34,9 @@ class source:
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
         try:
-            url = self.__search(tvshowtitle, aliases, year)
+            url = self.__search([localtvshowtitle] + source_utils.aliases_to_array(aliases), year)
             if not url and tvshowtitle != localtvshowtitle:
-                url = self.__search(localtvshowtitle, aliases, year)
+                url = self.__search([tvshowtitle] + source_utils.aliases_to_array(aliases), year)
             return urllib.urlencode({'url': url, 'imdb': re.sub('[^0-9]', '', imdb)}) if url else None
         except:
             return
@@ -144,10 +144,10 @@ class source:
             source_faultlog.logFault(__name__, source_faultlog.tagResolve)
             return url
 
-    def __search(self, localtitle, aliases,year):
+    def __search(self, titles, year):
         try:
-            t = [cleantitle.get(i) for i in set(aliases) if i]
-            url = self.search % localtitle
+            t = [cleantitle.get(i) for i in set(titles) if i]
+            url = self.search % titles[0]
 
             sHtmlContent = self.scraper.get(url).content
             search_results = dom_parser.parse_dom(sHtmlContent, 'div', attrs={'class': 'title'})
