@@ -96,6 +96,7 @@ class source:
 
                 url = re.search("http(.*?)(?=')", x[0][0]['data-bind'])
                 url = url.group()
+                if 'filecrypt' in url: continue
 
                 valid, hoster = source_utils.is_host_valid(hoster, hostDict)
                 if not valid: continue
